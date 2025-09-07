@@ -42,7 +42,7 @@
     .empty-state { text-align: center; padding: 40px 20px; color: #666; }
     .conflicts { margin-top: 15px; }
     .conflict-item { border: 1px solid #e5e7eb; border-radius: 4px; padding: 12px; margin-bottom: 10px; background-color: #f9fafb; }
-    .conflict-header { display: flex; justify-content: between; align-items: center; margin-bottom: 8px; }
+    .conflict-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .conflict-title { font-weight: 500; }
     .similarity-score { font-size: 12px; color: #666; }
     .conflict-details { font-size: 13px; color: #555; line-height: 1.4; }
@@ -138,7 +138,9 @@
 
       <!-- Right column -->
       <div class="card">
-        <h2>Current Bookings</h2>
+        $1
+
+        <div id="dataStatus" class="status status-error hidden" style="margin-bottom:8px;"></div>
 
         <div class="filters">
           <input id="filterText" placeholder="Search..." />
@@ -270,6 +272,21 @@
       markInvalid(input.datasetLink, input.datasetLink.value && !isValidURL(input.datasetLink.value));
     });
 
+    // Network helper with timeout
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
+      const ctrl = new AbortController();
+      const id = setTimeout(() => ctrl.abort('timeout'), timeoutMs);
+      try {
+        const res = await fetch(url, { ...options, signal: ctrl.signal });
+        clearTimeout(id);
+        return res;
+      } catch (e) {
+        clearTimeout(id);
+        throw e;
+      }
+    }
+    });
+
     // Event listeners
     document.getElementById('refreshBtn').addEventListener('click', loadRows);
     clearFilters.addEventListener('click', () => { filterText.value = ''; filterTeacher.value = ''; renderRows(); });
@@ -281,8 +298,40 @@
     // Load data
     async function loadRows() {
       rowsTbody.innerHTML = '<tr><td colspan="7" class="loading">Loading...</td></tr>';
+      const dataStatus = document.getElementById('dataStatus');
+      if (dataStatus) { dataStatus.classList.add('hidden'); dataStatus.textContent = ''; }
       try {
         const url = `${SCRIPT_URL}?action=list&token=${encodeURIComponent(API_TOKEN)}`;
+        const res = await fetchWithTimeout(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        allRows = (data.rows || []).map((r, idx) => ({
+          idx,
+          Timestamp: r.Timestamp ? new Date(r.Timestamp) : '',
+          StudentName: r.StudentName || '',
+          StudentID: r.StudentID || '',
+          TopicTitle: r.TopicTitle || '',
+          Dataset: r.Dataset || '',
+          DatasetLink: r.DatasetLink || '',
+          Goal: r.Goal || '',
+          Teacher: r.Teacher || '',
+          Status: r.Status || 'Booked',
+          Notes: r.Notes || ''
+        }));
+
+        renderRows();
+      } catch (err) {
+        console.error('Sheet load error:', err);
+        rowsTbody.innerHTML = '<tr><td colspan="7" class="empty-state">No data</td></tr>';
+        if (dataStatus) {
+          const hint = 'Cannot load data from the Google Sheet (Apps Script). Check: deployment URL (/exec), permissions (Anyone), CORS, and API token.';
+          dataStatus.textContent = `Data Error: ${err && err.message ? err.message : err}. ${hint}`;
+          dataStatus.classList.remove('hidden');
+        }
+      }
+    }?action=list&token=${encodeURIComponent(API_TOKEN)}`;
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
         const data = await res.json();
@@ -352,7 +401,7 @@
         embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
       }
     }
-    }
+
     async function embedText(text) {
       const out = await embedder(text, { pooling: 'mean', normalize: true });
       return Array.from(out.data);
