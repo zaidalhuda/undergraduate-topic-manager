@@ -5,55 +5,294 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Undergrad Topic Booking</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f5f5f5; color: #333; line-height: 1.6; padding: 20px; }
-    .container { max-width: 1200px; margin: 0 auto; }
-    .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .header h1 { font-size: 24px; color: #2563eb; margin-bottom: 5px; }
-    .header p { color: #666; margin-bottom: 15px; }
-    .card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .card h2 { font-size: 18px; margin-bottom: 15px; color: #333; }
-    .form-group { margin-bottom: 15px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
-    label { display: block; margin-bottom: 5px; font-weight: 500; color: #333; }
-    input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; transition: border-color .15s, background-color .15s; }
-    input:focus, textarea:focus, select:focus { outline: none; border-color: #2563eb; }
-    small.help { display:block; color:#6b7280; margin-top:6px; }
-    textarea { resize: vertical; min-height: 80px; }
-    .checkbox-group { display: flex; align-items: center; gap: 8px; margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-radius: 4px; }
-    .btn { background-color: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; }
-    .btn:hover { background-color: #1d4ed8; }
-    .btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
-    .btn-secondary { background-color: #6b7280; }
-    .btn-secondary:hover { background-color: #4b5563; }
-    .btn-full { width: 100%; }
-    .status { padding: 8px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; display: inline-block; }
-    .status-success { background-color: #dcfce7; color: #166534; }
-    .status-error { background-color: #fee2e2; color: #991b1b; }
-    .status-warning { background-color: #fef3c7; color: #92400e; }
-    .filters { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-    .filters input { flex: 1; min-width: 150px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    table th { background-color: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e5e7eb; }
-    table td { padding: 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
-    table tr:hover { background-color: #f8f9fa; }
-    .loading { text-align: center; padding: 20px; color: #666; }
-    .empty-state { text-align: center; padding: 40px 20px; color: #666; }
-    .conflicts { margin-top: 15px; }
-    .conflict-item { border: 1px solid #e5e7eb; border-radius: 4px; padding: 12px; margin-bottom: 10px; background-color: #f9fafb; }
-    .conflict-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .conflict-title { font-weight: 500; }
-    .similarity-score { font-size: 12px; color: #666; }
-    .conflict-details { font-size: 13px; color: #555; line-height: 1.4; }
-    .layout { display: grid; grid-template-columns: 400px 1fr; gap: 20px; }
-    @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } }
-    .hidden { display: none; }
-    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #f3f3f3; border-top: 2px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px; }
-    .invalid { border-color: #ef4444; background-color: #fff7f7; }
-    .error-list { margin-top: 10px; }
-    .error-list li { margin-left: 18px; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      color: #2563eb;
+      margin-bottom: 5px;
+    }
+    
+    .header p {
+      color: #666;
+      margin-bottom: 15px;
+    }
+    
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+    
+    input.error {
+      border-color: #ef4444;
+    }
+    
+    .error-message {
+      color: #ef4444;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 15px 0;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+    }
+    
+    .btn {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+    
+    .btn:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+    }
+    
+    .btn-secondary {
+      background-color: #6b7280;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #4b5563;
+    }
+    
+    .btn-full {
+      width: 100%;
+    }
+    
+    .status {
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-block;
+    }
+    
+    .status-success {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+    
+    .status-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .status-warning {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+    
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .filters input {
+      flex: 1;
+      min-width: 150px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    
+    table th {
+      background-color: #f8f9fa;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    table td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    table tr:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+    }
+    
+    .conflicts {
+      margin-top: 15px;
+    }
+    
+    .conflict-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background-color: #f9fafb;
+    }
+    
+    .conflict-header {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .conflict-title {
+      font-weight: 500;
+    }
+    
+    .similarity-score {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .conflict-details {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.4;
+    }
+    
+    .layout {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 20px;
+    }
+    
+    @media (max-width: 1024px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #2563eb;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    code {
+      background-color: #f3f4f6;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-size: 12px;
+    }
   </style>
 </head>
 <body>
@@ -70,17 +309,16 @@
         <!-- Check Section -->
         <div class="card">
           <h2>Check Availability</h2>
-
+          
           <div class="form-row">
             <div class="form-group">
               <label>Student Name</label>
               <input id="studentName" placeholder="e.g., Sara Ali" />
-              <small class="help">Letters only (any language). No digits. Spaces, hyphens, and apostrophes are fine.</small>
             </div>
             <div class="form-group">
               <label>Student ID (CDU)</label>
-              <input id="studentId" placeholder="2021XXXXXXXX" maxlength="12" inputmode="numeric" />
-              <small class="help">Must be 12 digits and start with <strong>2021</strong>.</small>
+              <input id="studentId" placeholder="2021xxxxxxxx" maxlength="12" />
+              <div id="studentIdError" class="error-message hidden">Student ID must be 12 digits starting with 2021</div>
             </div>
           </div>
 
@@ -108,8 +346,22 @@
           <div class="form-group">
             <label>Supervisor</label>
             <select id="teacher">
-              <option value="">Select supervisor...</option>
-              <!-- options are populated dynamically in alpha order -->
+              <option value="">Select Supervisor</option>
+              <option value="Cezar">Cezar</option>
+              <option value="Gladys">Gladys</option>
+              <option value="IJ">IJ</option>
+              <option value="Isaac">Isaac</option>
+              <option value="James">James</option>
+              <option value="Javed">Javed</option>
+              <option value="Joao">Joao</option>
+              <option value="Linda">Linda</option>
+              <option value="Martin">Martin</option>
+              <option value="Meropi">Meropi</option>
+              <option value="Pedro">Pedro</option>
+              <option value="Stacy">Stacy</option>
+              <option value="Taha">Taha</option>
+              <option value="Yuefei">Yuefei</option>
+              <option value="Zaid">Zaid</option>
             </select>
           </div>
 
@@ -129,8 +381,8 @@
         <!-- Add Section -->
         <div class="card">
           <h2>Add Booking</h2>
-          <p style="margin-bottom: 10px; color: #666;">Submit your topic if it's available.</p>
-          <div id="validationErrors" class="hidden status status-error"></div>
+          <p style="margin-bottom: 15px; color: #666;">Submit your topic if it's available.</p>
+          
           <button id="addBtn" class="btn btn-full">Add to Sheet</button>
           <div id="addStatus" style="margin-top: 10px; text-align: center;"></div>
         </div>
@@ -138,10 +390,8 @@
 
       <!-- Right column -->
       <div class="card">
-        $1
-
-        <div id="dataStatus" class="status status-error hidden" style="margin-bottom:8px;"></div>
-
+        <h2>Current Bookings</h2>
+        
         <div class="filters">
           <input id="filterText" placeholder="Search..." />
           <input id="filterTeacher" placeholder="Filter by Teacher" />
@@ -155,7 +405,7 @@
                 <th>#</th>
                 <th>Student</th>
                 <th>Topic</th>
-                <th>Dataset Name</th>
+                <th>Dataset</th>
                 <th>Goal</th>
                 <th>Teacher</th>
                 <th>Status</th>
@@ -176,10 +426,6 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-XvLRaoqMynEZvgpaQJf2en2ikVEVCGKx5g2qtSbZJMFehLkvFPbWgZgmr0IPlLFnPw/exec';
     const API_TOKEN = 'my-secret-123';
 
-    // Teachers (alpha sorted)
-    const TEACHERS = ['Zaid','Martin','Taha','Javed','Joao','Pedro','Linda','James','Meropi','Isaac','Cezar','Gladys','Stacy','IJ','Yuefei']
-      .sort((a,b) => a.localeCompare(b));
-
     // Elements
     const input = {
       studentName: document.getElementById('studentName'),
@@ -198,150 +444,70 @@
     const conflictsBox = document.getElementById('conflicts');
     const addBtn = document.getElementById('addBtn');
     const addStatus = document.getElementById('addStatus');
-    const validationErrors = document.getElementById('validationErrors');
     const filterText = document.getElementById('filterText');
     const filterTeacher = document.getElementById('filterTeacher');
     const clearFilters = document.getElementById('clearFilters');
     const rowsTbody = document.getElementById('rows');
+    const studentIdError = document.getElementById('studentIdError');
 
     let allRows = [];
     let embedder = null;
 
-    // Populate teachers dropdown (alpha)
-    function populateTeachers() {
-      for (const t of TEACHERS) {
-        const opt = document.createElement('option');
-        opt.value = t;
-        opt.textContent = t;
-        input.teacher.appendChild(opt);
-      }
+    // Student ID validation
+    function validateStudentId(value) {
+      const pattern = /^2021\d{8}$/;
+      return pattern.test(value);
     }
-
-    // Helpers
-    function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str ?? ''; return div.innerHTML; }
-    function getStatusBadge(status) {
-      const s = (status || 'Booked').toLowerCase();
-      if (s.includes('book')) return '<span class="status status-success">Booked</span>';
-      if (s.includes('pending')) return '<span class="status status-warning">Pending</span>';
-      return '<span class="status status-warning">' + escapeHtml(status || 'Unknown') + '</span>';
-    }
-    function validateStudentID(id) { return /^2021\d{8}$/.test(id); }
-    // Name validation: allow any script, forbid digits, length 2–60, require at least one letter-like char
-    function validateName(name) {
-      if (!name) return false;
-      const trimmed = name.trim();
-      if (trimmed.length < 2 || trimmed.length > 60) return false;
-      if (/[0-9]/.test(trimmed)) return false;
-      const hasLetter = /[A-Za-z\u00C0-\u024F\u0400-\u04FF\u0370-\u03FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\u0900-\u097F\u3040-\u30FF\u4E00-\u9FFF]/u.test(trimmed);
-      return hasLetter;
-    }
-    function isValidURL(url) {
-      if (!url) return true; // optional
-      try {
-        const u = new URL(url);
-        return u.protocol === 'http:' || u.protocol === 'https:';
-      } catch { return false; }
-    }
-    function markInvalid(el, invalid) { el.classList.toggle('invalid', !!invalid); }
-
-    // Wait for Transformers.js to be ready (handles slow network/UMD attach)
-    async function waitForTransformers(timeoutMs = 15000) {
-      if (window.transformers && window.transformers.pipeline) return window.transformers;
-      const start = Date.now();
-      return new Promise((resolve, reject) => {
-        const timer = setInterval(() => {
-          if (window.transformers && window.transformers.pipeline) {
-            clearInterval(timer);
-            resolve(window.transformers);
-          } else if (Date.now() - start > timeoutMs) {
-            clearInterval(timer);
-            reject(new Error('Transformers.js failed to load. Please check your network or try again.'));
-          }
-        }, 100);
-      });
-    }
-// Live feedback (no blocking of typing)
-    input.studentId.addEventListener('input', () => {
-      input.studentId.value = input.studentId.value.replace(/\D/g, '').slice(0, 12);
-      markInvalid(input.studentId, input.studentId.value && !validateStudentID(input.studentId.value));
-    });
-    input.studentName.addEventListener('input', () => {
-      markInvalid(input.studentName, input.studentName.value && !validateName(input.studentName.value));
-    });
-    input.datasetLink.addEventListener('input', () => {
-      markInvalid(input.datasetLink, input.datasetLink.value && !isValidURL(input.datasetLink.value));
-    });
-
-    // Network helper with timeout
-    async function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
-      const ctrl = new AbortController();
-      const id = setTimeout(() => ctrl.abort('timeout'), timeoutMs);
-      try {
-        const res = await fetch(url, { ...options, signal: ctrl.signal });
-        clearTimeout(id);
-        return res;
-      } catch (e) {
-        clearTimeout(id);
-        throw e;
-      }
-    }
-    });
 
     // Event listeners
     document.getElementById('refreshBtn').addEventListener('click', loadRows);
-    clearFilters.addEventListener('click', () => { filterText.value = ''; filterTeacher.value = ''; renderRows(); });
+    clearFilters.addEventListener('click', () => {
+      filterText.value = '';
+      filterTeacher.value = '';
+      renderRows();
+    });
     filterText.addEventListener('input', renderRows);
     filterTeacher.addEventListener('input', renderRows);
     checkBtn.addEventListener('click', checkAvailability);
     addBtn.addEventListener('click', addBooking);
 
+    // Student ID validation on input
+    input.studentId.addEventListener('input', function() {
+      const value = this.value.trim();
+      if (value && !validateStudentId(value)) {
+        this.classList.add('error');
+        studentIdError.classList.remove('hidden');
+      } else {
+        this.classList.remove('error');
+        studentIdError.classList.add('hidden');
+      }
+    });
+
     // Load data
     async function loadRows() {
       rowsTbody.innerHTML = '<tr><td colspan="7" class="loading">Loading...</td></tr>';
-      const dataStatus = document.getElementById('dataStatus');
-      if (dataStatus) { dataStatus.classList.add('hidden'); dataStatus.textContent = ''; }
+      
       try {
         const url = `${SCRIPT_URL}?action=list&token=${encodeURIComponent(API_TOKEN)}`;
-        const res = await fetchWithTimeout(url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-
-        allRows = (data.rows || []).map((r, idx) => ({
-          idx,
-          Timestamp: r.Timestamp ? new Date(r.Timestamp) : '',
-          StudentName: r.StudentName || '',
-          StudentID: r.StudentID || '',
-          TopicTitle: r.TopicTitle || '',
-          Dataset: r.Dataset || '',
-          DatasetLink: r.DatasetLink || '',
-          Goal: r.Goal || '',
-          Teacher: r.Teacher || '',
-          Status: r.Status || 'Booked',
-          Notes: r.Notes || ''
-        }));
-
-        renderRows();
-      } catch (err) {
-        console.error('Sheet load error:', err);
-        rowsTbody.innerHTML = '<tr><td colspan="7" class="empty-state">No data</td></tr>';
-        if (dataStatus) {
-          const hint = 'Cannot load data from the Google Sheet (Apps Script). Check: deployment URL (/exec), permissions (Anyone), CORS, and API token.';
-          dataStatus.textContent = `Data Error: ${err && err.message ? err.message : err}. ${hint}`;
-          dataStatus.classList.remove('hidden');
-        }
-      }
-    }?action=list&token=${encodeURIComponent(API_TOKEN)}`;
         const res = await fetch(url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        
         const data = await res.json();
-        if (data.error) throw new Error(data.error);
-
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
         allRows = (data.rows || []).map((r, idx) => ({
           idx,
           Timestamp: r.Timestamp ? new Date(r.Timestamp) : '',
           StudentName: r.StudentName || '',
           StudentID: r.StudentID || '',
+          Email: r.Email || '',
+          Program: r.Program || '',
           TopicTitle: r.TopicTitle || '',
           Dataset: r.Dataset || '',
           DatasetLink: r.DatasetLink || '',
@@ -350,7 +516,7 @@
           Status: r.Status || 'Booked',
           Notes: r.Notes || ''
         }));
-
+        
         renderRows();
       } catch (err) {
         rowsTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">Error: ${err.message}</td></tr>`;
@@ -361,7 +527,7 @@
     function renderRows() {
       const searchText = filterText.value.toLowerCase();
       const teacherFilter = filterTeacher.value.toLowerCase();
-
+      
       const filtered = allRows.filter(r => {
         const searchTarget = `${r.StudentName} ${r.TopicTitle} ${r.Dataset} ${r.Goal} ${r.Teacher}`.toLowerCase();
         const matchesSearch = !searchText || searchTarget.includes(searchText);
@@ -379,26 +545,39 @@
           <td>${i + 1}</td>
           <td>
             <div style="font-weight: 500;">${escapeHtml(r.StudentName)}</div>
-            <div style="font-size: 12px; color: #666;">${escapeHtml(r.StudentID)}</div>
+            <div style="font-size: 12px; color: #666;">ID: ${escapeHtml(r.StudentID)}</div>
           </td>
           <td>${escapeHtml(r.TopicTitle)}</td>
           <td>
-            <div><strong>${escapeHtml(r.Dataset)}</strong></div>
+            <div style="font-weight: 500;">${escapeHtml(r.Dataset)}</div>
             ${r.DatasetLink ? `<a href="${r.DatasetLink}" target="_blank" style="color: #2563eb; font-size: 12px;">View Dataset →</a>` : ''}
           </td>
-          <td style="max-width: 260px; word-wrap: break-word;">${escapeHtml(r.Goal)}</td>
+          <td style="max-width: 200px; word-wrap: break-word;">${escapeHtml(r.Goal)}</td>
           <td>${escapeHtml(r.Teacher)}</td>
           <td>${getStatusBadge(r.Status)}</td>
         </tr>
       `).join('');
     }
 
+    // Status badge
+    function getStatusBadge(status) {
+      const s = (status || 'Booked').toLowerCase();
+      if (s.includes('book')) return '<span class="status status-success">Booked</span>';
+      if (s.includes('pending')) return '<span class="status status-warning">Pending</span>';
+      return `<span class="status status-warning">${escapeHtml(status || 'Unknown')}</span>`;
+    }
+
+    // Escape HTML
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
     // AI similarity functions
     async function ensureEmbedderLoaded() {
       if (!embedder) {
-        const tf = await waitForTransformers();
-        const { pipeline } = tf;
-        embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+        embedder = await window.transformers.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
       }
     }
 
@@ -406,67 +585,33 @@
       const out = await embedder(text, { pooling: 'mean', normalize: true });
       return Array.from(out.data);
     }
-    function cosineSim(a, b) { let sum = 0; for (let i = 0; i < a.length; i++) sum += a[i] * b[i]; return sum; }
 
-    // Check conflicts (exact matches on topic or dataset/link)
+    function cosineSim(a, b) {
+      let sum = 0;
+      for (let i = 0; i < a.length; i++) sum += a[i] * b[i];
+      return sum;
+    }
+
+    // Check conflicts
     function isExactConflict(newRow, existingRow) {
       const sameTopic = newRow.TopicTitle.toLowerCase() === existingRow.TopicTitle.toLowerCase();
       if (sameTopic) return true;
+
       const sameDataset = newRow.Dataset.toLowerCase() === existingRow.Dataset.toLowerCase() ||
-                          newRow.DatasetLink === existingRow.DatasetLink;
+                         newRow.DatasetLink === existingRow.DatasetLink;
       return sameDataset;
-    }
-
-    // Validate all fields and return {ok, errors}
-    function validateAll(forAdd = true) {
-      const errors = [];
-
-      const name = input.studentName.value.trim();
-      const sid  = input.studentId.value.trim();
-      const topic = input.topicTitle.value.trim();
-      const dname = input.dataset.value.trim();
-      const durl  = input.datasetLink.value.trim();
-      const teacher = input.teacher.value.trim();
-
-      // Reset invalid styles
-      [input.studentName, input.studentId, input.topicTitle, input.dataset, input.datasetLink, input.teacher]
-        .forEach(el => markInvalid(el, false));
-
-      if (!validateName(name)) { errors.push('Student Name must be letters (no digits).'); markInvalid(input.studentName, true); }
-      if (!validateStudentID(sid)) { errors.push('Student ID must be 12 digits and start with 2021.'); markInvalid(input.studentId, true); }
-      if (forAdd && !topic) { errors.push('Topic Title is required.'); markInvalid(input.topicTitle, true); }
-      if (forAdd && !dname) { errors.push('Dataset Name is required.'); markInvalid(input.dataset, true); }
-      if (!isValidURL(durl)) { errors.push('Dataset URL must be a valid http/https link.'); markInvalid(input.datasetLink, true); }
-      if (forAdd && !teacher) { errors.push('Please select a Supervisor.'); markInvalid(input.teacher, true); }
-      if (teacher && !TEACHERS.includes(teacher)) { errors.push('Supervisor must be from the list.'); markInvalid(input.teacher, true); }
-
-      return { ok: errors.length === 0, errors };
-    }
-
-    function showErrors(list) {
-      if (!list || list.length === 0) { validationErrors.classList.add('hidden'); validationErrors.innerHTML = ''; return; }
-      validationErrors.innerHTML = '<ul class="error-list"><li>' + list.map(e => escapeHtml(e)).join('</li><li>') + '</li></ul>';
-      validationErrors.classList.remove('hidden');
     }
 
     // Check availability
     async function checkAvailability() {
       checkBtn.innerHTML = '<span class="spinner"></span>Checking...';
       checkBtn.disabled = true;
+      
       availabilityNote.innerHTML = '';
       conflictsBox.innerHTML = '';
       checkResult.classList.remove('hidden');
-      showErrors([]);
 
       try {
-        // light validation first
-        const basic = validateAll(false);
-        if (!basic.ok) {
-          showErrors(basic.errors);
-          availabilityNote.innerHTML = '<div class="status status-warning">Please fix the highlighted fields.</div>';
-          return;
-        }
-
         const candidate = {
           TopicTitle: input.topicTitle.value.trim(),
           Dataset: input.dataset.value.trim(),
@@ -480,10 +625,11 @@
         }
 
         let matches = [];
-
+        
         if (smartCheck.checked) {
           await ensureEmbedderLoaded();
           const candVec = await embedText(`${candidate.TopicTitle} ${candidate.Dataset} ${candidate.Goal}`);
+          
           for (const r of allRows) {
             const rVec = await embedText(`${r.TopicTitle} ${r.Dataset} ${r.Goal}`);
             const score = cosineSim(candVec, rVec);
@@ -539,51 +685,73 @@
 
     // Add booking
     async function addBooking() {
+      // Validate Student ID
+      const studentIdValue = input.studentId.value.trim();
+      if (studentIdValue && !validateStudentId(studentIdValue)) {
+        addStatus.innerHTML = '<div class="status status-error">❌ Invalid Student ID format</div>';
+        return;
+      }
+
       addBtn.innerHTML = '<span class="spinner"></span>Adding...';
       addBtn.disabled = true;
       addStatus.textContent = '';
-      showErrors([]);
 
       try {
-        const v = validateAll(true);
-        if (!v.ok) {
-          showErrors(v.errors);
-          throw new Error('Please fix the highlighted fields.');
-        }
-
         const payload = {
           StudentName: input.studentName.value.trim(),
           StudentID: input.studentId.value.trim(),
+          Email: '', // Not collected anymore
+          Program: '', // Not collected anymore
           TopicTitle: input.topicTitle.value.trim(),
           Dataset: input.dataset.value.trim(),
           DatasetLink: input.datasetLink.value.trim(),
           Goal: input.goal.value.trim(),
-          Teacher: input.teacher.value.trim(),
+          Teacher: input.teacher.value,
           Status: 'Booked',
           Notes: ''
         };
+
+        if (!payload.StudentName || !payload.TopicTitle || !payload.Teacher) {
+          throw new Error('Please fill in required fields: Student Name, Topic Title, and Teacher');
+        }
 
         const formData = new FormData();
         formData.append('token', API_TOKEN);
         formData.append('data', JSON.stringify(payload));
 
-        const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: formData
+        });
 
+        const data = await res.json();
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
         if (data && data.ok) {
           addStatus.innerHTML = '<div class="status status-success">✅ Added successfully</div>';
+          
           // Clear form
-          Object.values(input).forEach(el => { if (el && 'value' in el) el.value = ''; });
-          validationErrors.classList.add('hidden');
-          validationErrors.innerHTML = '';
+          Object.values(input).forEach(el => {
+            if (el.tagName === 'SELECT') {
+              el.selectedIndex = 0;
+            } else {
+              el.value = '';
+            }
+          });
+          
+          // Refresh data
           await loadRows();
+          
+          // Hide check results
           checkResult.classList.add('hidden');
         } else {
           throw new Error('Unexpected response format');
         }
       } catch (err) {
-        addStatus.innerHTML = `<div class="status status-error">❌ ${escapeHtml(err.message)}</div>`;
+        addStatus.innerHTML = `<div class="status status-error">❌ Error: ${err.message}</div>`;
       } finally {
         addBtn.innerHTML = 'Add to Sheet';
         addBtn.disabled = false;
@@ -591,7 +759,6 @@
     }
 
     // Initialize
-    populateTeachers();
     loadRows();
   </script>
 </body>
