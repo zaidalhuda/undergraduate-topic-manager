@@ -75,7 +75,7 @@
             <div class="form-group">
               <label>Student Name</label>
               <input id="studentName" placeholder="e.g., Sara Ali" />
-              <small class="help">Letters only (any language), spaces, hyphens, apostrophes allowed.</small>
+              <small class="help">Letters only (any language). No digits. Spaces, hyphens, and apostrophes are fine.</small>
             </div>
             <div class="form-group">
               <label>Student ID (CDU)</label>
@@ -153,7 +153,7 @@
                 <th>#</th>
                 <th>Student</th>
                 <th>Topic</th>
-                <th>Dataset</th>
+                <th>Dataset Name</th>
                 <th>Goal</th>
                 <th>Teacher</th>
                 <th>Status</th>
@@ -223,8 +223,16 @@
       if (s.includes('pending')) return '<span class="status status-warning">Pending</span>';
       return '<span class="status status-warning">' + escapeHtml(status || 'Unknown') + '</span>';
     }
-    function validateStudentID(id) { return /^2021\\d{8}$/.test(id); }
-    function validateName(name) { return /^[\\p{L}][\\p{L} .'-]{1,59}$/u.test(name); } // Unicode letters + allowed chars
+    function validateStudentID(id) { return /^2021\d{8}$/.test(id); }
+    // Name validation: allow any script, forbid digits, length 2–60, require at least one letter-like char
+    function validateName(name) {
+      if (!name) return false;
+      const trimmed = name.trim();
+      if (trimmed.length < 2 || trimmed.length > 60) return false;
+      if (/[0-9]/.test(trimmed)) return false;
+      const hasLetter = /[A-Za-z\u00C0-\u024F\u0400-\u04FF\u0370-\u03FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\u0900-\u097F\u3040-\u30FF\u4E00-\u9FFF]/u.test(trimmed);
+      return hasLetter;
+    }
     function isValidURL(url) {
       if (!url) return true; // optional
       try {
@@ -232,19 +240,15 @@
         return u.protocol === 'http:' || u.protocol === 'https:';
       } catch { return false; }
     }
-
     function markInvalid(el, invalid) { el.classList.toggle('invalid', !!invalid); }
 
-    // Live sanitize inputs
+    // Live feedback (no blocking of typing)
     input.studentId.addEventListener('input', () => {
-      input.studentId.value = input.studentId.value.replace(/\\D/g, '').slice(0, 12);
+      input.studentId.value = input.studentId.value.replace(/\D/g, '').slice(0, 12);
       markInvalid(input.studentId, input.studentId.value && !validateStudentID(input.studentId.value));
     });
     input.studentName.addEventListener('input', () => {
-      // allow only letters, spaces and selected punctuation
-      const cleaned = input.studentName.value.replace(/[^\\p{L} .'-]/gu, '');
-      if (cleaned !== input.studentName.value) input.studentName.value = cleaned;
-      markInvalid(input.studentName, input.studentName.value && !validateName(input.studentName.value.trim()));
+      markInvalid(input.studentName, input.studentName.value && !validateName(input.studentName.value));
     });
     input.datasetLink.addEventListener('input', () => {
       markInvalid(input.datasetLink, input.datasetLink.value && !isValidURL(input.datasetLink.value));
@@ -288,7 +292,7 @@
       }
     }
 
-    // Render table rows (ensure dataset name is visible)
+    // Render table rows
     function renderRows() {
       const searchText = filterText.value.toLowerCase();
       const teacherFilter = filterTeacher.value.toLowerCase();
@@ -360,7 +364,7 @@
       [input.studentName, input.studentId, input.topicTitle, input.dataset, input.datasetLink, input.teacher]
         .forEach(el => markInvalid(el, false));
 
-      if (!validateName(name)) { errors.push('Student Name must contain letters only (plus spaces, hyphens, apostrophes).'); markInvalid(input.studentName, true); }
+      if (!validateName(name)) { errors.push('Student Name must be letters (no digits).'); markInvalid(input.studentName, true); }
       if (!validateStudentID(sid)) { errors.push('Student ID must be 12 digits and start with 2021.'); markInvalid(input.studentId, true); }
       if (forAdd && !topic) { errors.push('Topic Title is required.'); markInvalid(input.topicTitle, true); }
       if (forAdd && !dname) { errors.push('Dataset Name is required.'); markInvalid(input.dataset, true); }
@@ -377,7 +381,7 @@
       validationErrors.classList.remove('hidden');
     }
 
-    // Check availability (also light validation of name/ID so users see issues early)
+    // Check availability
     async function checkAvailability() {
       checkBtn.innerHTML = '<span class="spinner"></span>Checking...';
       checkBtn.disabled = true;
@@ -387,6 +391,7 @@
       showErrors([]);
 
       try {
+        // light validation first
         const basic = validateAll(false);
         if (!basic.ok) {
           showErrors(basic.errors);
