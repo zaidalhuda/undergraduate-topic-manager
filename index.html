@@ -406,7 +406,7 @@
                 <th>Student</th>
                 <th>Topic</th>
                 <th>Dataset</th>
-                <th>Goal</th>
+                <th>Link</th><th>Goal</th>
                 <th>Teacher</th>
                 <th>Status</th>
               </tr>
@@ -509,8 +509,8 @@
           Email: r.Email || '',
           Program: r.Program || '',
           TopicTitle: r.TopicTitle || '',
-          Dataset: r.Dataset || '',
-          DatasetLink: r.DatasetLink || '',
+          Dataset: (r['Dataset Name'] || r.Dataset || ''),
+          DatasetLink: (r['Dataset Link'] || r.DatasetLink || ''),
           Goal: r.Goal || '',
           Teacher: r.Teacher || '',
           Status: r.Status || 'Booked',
@@ -767,3 +767,42 @@
   </script>
 </body>
 </html>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    const table = Array.from(document.querySelectorAll('h2, h3'))
+      .find(h => /Current\s*Bookings/i.test(h.textContent));
+    if (!table) return;
+    // Find the table immediately following the header
+    let t = table.nextElementSibling;
+    while (t && t.tagName !== 'TABLE') t = t.nextElementSibling;
+    if (!t) return;
+    const rows = t.querySelectorAll('tbody tr');
+    rows.forEach(tr => {
+      const dsNameCell = tr.querySelector('td:nth-child(4)'); // assuming Dataset name is 4th data col
+      let link = '';
+      // try data-link attribute first
+      if (tr.dataset && tr.dataset.datasetLink) link = tr.dataset.datasetLink;
+      // try a hidden cell with data-dataset-link
+      if (!link) {
+        const hidden = tr.querySelector('[data-dataset-link]');
+        if (hidden) link = hidden.getAttribute('data-dataset-link');
+      }
+      // try a global row cache if present
+      if (!link && window.rowCache && window.rowCache.has(tr)) {
+        link = window.rowCache.get(tr).DatasetLink || '';
+      }
+      // finally, try to parse from dataset name cell if it contains an <a>
+      if (!link && dsNameCell) {
+        const a = dsNameCell.querySelector('a[href]');
+        if (a) link = a.getAttribute('href');
+      }
+      const td = document.createElement('td');
+      td.innerHTML = link ? '<a href="' + link + '" target="_blank">Open</a>' : '';
+      tr.appendChild(td);
+    });
+  } catch(e) { console.warn('Post-render patch for Link column failed:', e); }
+});
+</script>
