@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Undergrad Topic Booking</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      color: #2563eb;
+      margin-bottom: 5px;
+    }
+    
+    .header p {
+      color: #666;
+      margin-bottom: 15px;
+    }
+    
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 15px 0;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+    }
+    
+    .btn {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+    
+    .btn:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+    }
+    
+    .btn-secondary {
+      background-color: #6b7280;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #4b5563;
+    }
+    
+    .btn-full {
+      width: 100%;
+    }
+    
+    .status {
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-block;
+    }
+    
+    .status-success {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+    
+    .status-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .status-warning {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+    
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .filters input {
+      flex: 1;
+      min-width: 150px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    
+    table th {
+      background-color: #f8f9fa;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    table td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    table tr:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+    }
+    
+    .conflicts {
+      margin-top: 15px;
+    }
+    
+    .conflict-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background-color: #f9fafb;
+    }
+    
+    .conflict-header {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .conflict-title {
+      font-weight: 500;
+    }
+    
+    .similarity-score {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .conflict-details {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.4;
+    }
+    
+    .layout {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 20px;
+    }
+    
+    @media (max-width: 1024px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #2563eb;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Undergrad Topic Booking</h1>
+      <p>Manage student research topics with conflict detection</p>
+      <button id="refreshBtn" class="btn btn-secondary">↻ Refresh Data</button>
+    </div>
+
+    <div class="layout">
+      <!-- Left column -->
+      <div>
+        <!-- Check Section -->
+        <div class="card">
+          <h2>Check Availability</h2>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Student Name</label>
+              <input id="studentName" placeholder="e.g., Sara Ali" />
+            </div>
+            <div class="form-group">
+              <label>Student ID</label>
+              <input id="studentId" placeholder="Optional" />
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email</label>
+              <input id="email" type="email" placeholder="student@university.edu" />
+            </div>
+            <div class="form-group">
+              <label>Program</label>
+              <input id="program" placeholder="e.g., Data Science" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Topic Title</label>
+            <input id="topicTitle" placeholder="Short descriptive title" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Dataset Name</label>
+              <input id="dataset" placeholder="e.g., UCI Credit" />
+            </div>
+            <div class="form-group">
+              <label>Dataset URL</label>
+              <input id="datasetLink" type="url" placeholder="https://..." />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Research Goal</label>
+            <textarea id="goal" placeholder="Describe the research objective"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Supervisor</label>
+            <input id="teacher" placeholder="e.g., Dr. Ahmed" />
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="smartCheck" />
+            <label for="smartCheck">Use AI similarity check (free, on-device)</label>
+          </div>
+
+          <button id="checkBtn" class="btn btn-full">Check Availability</button>
+
+          <div id="checkResult" class="hidden">
+            <div id="availabilityNote" style="margin-top: 15px;"></div>
+            <div id="conflicts"></div>
+          </div>
+        </div>
+
+        <!-- Add Section -->
+        <div class="card">
+          <h2>Add Booking</h2>
+          <p style="margin-bottom: 15px; color: #666;">Submit your topic if it's available.</p>
+          
+          <button id="addBtn" class="btn btn-full">Add to Sheet</button>
+          <div id="addStatus" style="margin-top: 10px; text-align: center;"></div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div class="card">
+        <h2>Current Bookings</h2>
+        
+        <div class="filters">
+          <input id="filterText" placeholder="Search..." />
+          <input id="filterTeacher" placeholder="Filter by Teacher" />
+          <button id="clearFilters" class="btn btn-secondary">Clear</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>Topic</th>
+                <th>Dataset</th>
+                <th>Goal</th>
+                <th>Teacher</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transformers.js for AI similarity -->
+  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@3.0.0/dist/transformers.min.js"></script>
+
+  <script>
+    // Configuration
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-XvLRaoqMynEZvgpaQJf2en2ikVEVCGKx5g2qtSbZJMFehLkvFPbWgZgmr0IPlLFnPw/exec';
+    const API_TOKEN = 'my-secret-123';
+
+    // Elements
+    const input = {
+      studentName: document.getElementById('studentName'),
+      studentId: document.getElementById('studentId'),
+      email: document.getElementById('email'),
+      program: document.getElementById('program'),
+      topicTitle: document.getElementById('topicTitle'),
+      dataset: document.getElementById('dataset'),
+      datasetLink: document.getElementById('datasetLink'),
+      goal: document.getElementById('goal'),
+      teacher: document.getElementById('teacher'),
+    };
+
+    const checkBtn = document.getElementById('checkBtn');
+    const smartCheck = document.getElementById('smartCheck');
+    const checkResult = document.getElementById('checkResult');
+    const availabilityNote = document.getElementById('availabilityNote');
+    const conflictsBox = document.getElementById('conflicts');
+    const addBtn = document.getElementById('addBtn');
+    const addStatus = document.getElementById('addStatus');
+    const filterText = document.getElementById('filterText');
+    const filterTeacher = document.getElementById('filterTeacher');
+    const clearFilters = document.getElementById('clearFilters');
+    const rowsTbody = document.getElementById('rows');
+
+    let allRows = [];
+    let embedder = null;
+
+    // Event listeners
+    document.getElementById('refreshBtn').addEventListener('click', loadRows);
+    clearFilters.addEventListener('click', () => {
+      filterText.value = '';
+      filterTeacher.value = '';
+      renderRows();
+    });
+    filterText.addEventListener('input', renderRows);
+    filterTeacher.addEventListener('input', renderRows);
+    checkBtn.addEventListener('click', checkAvailability);
+    addBtn.addEventListener('click', addBooking);
+
+    // Load data
+    async function loadRows() {
+      rowsTbody.innerHTML = '<tr><td colspan="7" class="loading">Loading...</td></tr>';
+      
+      try {
+        const url = `${SCRIPT_URL}?action=list&token=${encodeURIComponent(API_TOKEN)}`;
+        const res = await fetch(url);
+        
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        
+        const data = await res.json();
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        allRows = (data.rows || []).map((r, idx) => ({
+          idx,
+          Timestamp: r.Timestamp ? new Date(r.Timestamp) : '',
+          StudentName: r.StudentName || '',
+          StudentID: r.StudentID || '',
+          Email: r.Email || '',
+          Program: r.Program || '',
+          TopicTitle: r.TopicTitle || '',
+          Dataset: r.Dataset || '',
+          DatasetLink: r.DatasetLink || '',
+          Goal: r.Goal || '',
+          Teacher: r.Teacher || '',
+          Status: r.Status || 'Booked',
+          Notes: r.Notes || ''
+        }));
+        
+        renderRows();
+      } catch (err) {
+        rowsTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">Error: ${err.message}</td></tr>`;
+      }
+    }
+
+    // Render table rows
+    function renderRows() {
+      const searchText = filterText.value.toLowerCase();
+      const teacherFilter = filterTeacher.value.toLowerCase();
+      
+      const filtered = allRows.filter(r => {
+        const searchTarget = `${r.StudentName} ${r.TopicTitle} ${r.Dataset} ${r.Goal} ${r.Teacher}`.toLowerCase();
+        const matchesSearch = !searchText || searchTarget.includes(searchText);
+        const matchesTeacher = !teacherFilter || r.Teacher.toLowerCase().includes(teacherFilter);
+        return matchesSearch && matchesTeacher;
+      });
+
+      if (filtered.length === 0) {
+        rowsTbody.innerHTML = '<tr><td colspan="7" class="empty-state">No bookings found</td></tr>';
+        return;
+      }
+
+      rowsTbody.innerHTML = filtered.map((r, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>
+            <div style="font-weight: 500;">${escapeHtml(r.StudentName)}</div>
+            <div style="font-size: 12px; color: #666;">${escapeHtml(r.Program)}</div>
+          </td>
+          <td>${escapeHtml(r.TopicTitle)}</td>
+          <td>
+            ${escapeHtml(r.Dataset)}
+            ${r.DatasetLink ? `<br><a href="${r.DatasetLink}" target="_blank" style="color: #2563eb; font-size: 12px;">View Dataset →</a>` : ''}
+          </td>
+          <td style="max-width: 200px; word-wrap: break-word;">${escapeHtml(r.Goal)}</td>
+          <td>${escapeHtml(r.Teacher)}</td>
+          <td>${getStatusBadge(r.Status)}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Status badge
+    function getStatusBadge(status) {
+      const s = (status || 'Booked').toLowerCase();
+      if (s.includes('book')) return '<span class="status status-success">Booked</span>';
+      if (s.includes('pending')) return '<span class="status status-warning">Pending</span>';
+      return `<span class="status status-warning">${escapeHtml(status || 'Unknown')}</span>`;
+    }
+
+    // Escape HTML
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // AI similarity functions
+    async function ensureEmbedderLoaded() {
+      if (!embedder) {
+        embedder = await window.transformers.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+      }
+    }
+
+    async function embedText(text) {
+      const out = await embedder(text, { pooling: 'mean', normalize: true });
+      return Array.from(out.data);
+    }
+
+    function cosineSim(a, b) {
+      let sum = 0;
+      for (let i = 0; i < a.length; i++) sum += a[i] * b[i];
+      return sum;
+    }
+
+    // Check conflicts
+    function isExactConflict(newRow, existingRow) {
+      const sameTopic = newRow.TopicTitle.toLowerCase() === existingRow.TopicTitle.toLowerCase();
+      if (sameTopic) return true;
+
+      const sameDataset = newRow.Dataset.toLowerCase() === existingRow.Dataset.toLowerCase() ||
+                         newRow.DatasetLink === existingRow.DatasetLink;
+      return sameDataset;
+    }
+
+    // Check availability
+    async function checkAvailability() {
+      checkBtn.innerHTML = '<span class="spinner"></span>Checking...';
+      checkBtn.disabled = true;
+      
+      availabilityNote.innerHTML = '';
+      conflictsBox.innerHTML = '';
+      checkResult.classList.remove('hidden');
+
+      try {
+        const candidate = {
+          TopicTitle: input.topicTitle.value.trim(),
+          Dataset: input.dataset.value.trim(),
+          DatasetLink: input.datasetLink.value.trim(),
+          Goal: input.goal.value.trim()
+        };
+
+        if (!candidate.TopicTitle && !candidate.Dataset && !candidate.Goal) {
+          availabilityNote.innerHTML = '<div class="status status-warning">Please enter topic, dataset, or goal</div>';
+          return;
+        }
+
+        let matches = [];
+        
+        if (smartCheck.checked) {
+          await ensureEmbedderLoaded();
+          const candVec = await embedText(`${candidate.TopicTitle} ${candidate.Dataset} ${candidate.Goal}`);
+          
+          for (const r of allRows) {
+            const rVec = await embedText(`${r.TopicTitle} ${r.Dataset} ${r.Goal}`);
+            const score = cosineSim(candVec, rVec);
+            matches.push({ r, score, isConflict: isExactConflict(candidate, r) });
+          }
+        } else {
+          for (const r of allRows) {
+            const isConflict = isExactConflict(candidate, r);
+            matches.push({ r, score: isConflict ? 1 : 0, isConflict });
+          }
+        }
+
+        matches.sort((a, b) => b.score - a.score);
+        const highConflicts = matches.filter(x => x.score >= 0.85 || x.isConflict);
+        const mediumConflicts = matches.filter(x => x.score >= 0.6 && x.score < 0.85);
+
+        if (highConflicts.length > 0) {
+          availabilityNote.innerHTML = '<div class="status status-error">❌ Conflict - topic appears to be taken</div>';
+        } else if (mediumConflicts.length > 0) {
+          availabilityNote.innerHTML = '<div class="status status-warning">⚠️ Potential overlap detected</div>';
+        } else {
+          availabilityNote.innerHTML = '<div class="status status-success">✅ Available - no conflicts found</div>';
+        }
+
+        const topMatches = matches.slice(0, 5).filter(x => x.score > 0.1);
+        if (topMatches.length > 0) {
+          conflictsBox.innerHTML = `
+            <div class="conflicts">
+              <h4 style="margin-bottom: 10px;">Similar Topics:</h4>
+              ${topMatches.map(({r, score}) => `
+                <div class="conflict-item">
+                  <div class="conflict-header">
+                    <div class="conflict-title">${escapeHtml(r.TopicTitle)}</div>
+                    <div class="similarity-score">${(score * 100).toFixed(1)}% similar</div>
+                  </div>
+                  <div class="conflict-details">
+                    <strong>Dataset:</strong> ${escapeHtml(r.Dataset)}<br>
+                    <strong>Goal:</strong> ${escapeHtml(r.Goal)}<br>
+                    <strong>Teacher:</strong> ${escapeHtml(r.Teacher)}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+      } catch (error) {
+        availabilityNote.innerHTML = `<div class="status status-error">Error: ${error.message}</div>`;
+      } finally {
+        checkBtn.innerHTML = 'Check Availability';
+        checkBtn.disabled = false;
+      }
+    }
+
+    // Add booking
+    async function addBooking() {
+      addBtn.innerHTML = '<span class="spinner"></span>Adding...';
+      addBtn.disabled = true;
+      addStatus.textContent = '';
+
+      try {
+        const payload = {
+          StudentName: input.studentName.value.trim(),
+          StudentID: input.studentId.value.trim(),
+          Email: input.email.value.trim(),
+          Program: input.program.value.trim(),
+          TopicTitle: input.topicTitle.value.trim(),
+          Dataset: input.dataset.value.trim(),
+          DatasetLink: input.datasetLink.value.trim(),
+          Goal: input.goal.value.trim(),
+          Teacher: input.teacher.value.trim(),
+          Status: 'Booked',
+          Notes: ''
+        };
+
+        if (!payload.StudentName || !payload.TopicTitle || !payload.Teacher) {
+          throw new Error('Please fill in required fields: Student Name, Topic Title, and Teacher');
+        }
+
+        const formData = new FormData();
+        formData.append('token', API_TOKEN);
+        formData.append('data', JSON.stringify(payload));
+
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        if (data && data.ok) {
+          addStatus.innerHTML = '<div class="status status-success">✅ Added successfully</div>';
+          
+          // Clear form
+          Object.values(input).forEach(el => el.value = '');
+          
+          // Refresh data
+          await loadRows();
+          
+          // Hide check results
+          checkResult.classList.add('hidden');
+        } else {
+          throw new Error('Unexpected response format');
+        }
+      } catch (err) {
+        addStatus.innerHTML = `<div class="status status-error">❌ Error: ${err.message}</div>`;
+      } finally {
+        addBtn.innerHTML = 'Add to Sheet';
+        addBtn.disabled = false;
+      }
+    }
+
+    // Initialize
+    loadRows();
+  </script>
+</body>
+</html>
