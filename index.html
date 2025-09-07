@@ -549,19 +549,12 @@
           </td>
           <td>${escapeHtml(r.TopicTitle)}</td>
           <td>
-            ${r.Dataset ? `
-              <div style="font-weight: 500; color: #2563eb; margin-bottom: 4px;">
-                📊 ${escapeHtml(r.Dataset)}
-              </div>
-            ` : '<div style="color: #9ca3af; font-style: italic;">No dataset specified</div>'}
+            <div style="font-weight: 500; color: #2563eb; margin-bottom: 4px;">${escapeHtml(r.Dataset || 'No dataset specified')}</div>
             ${r.DatasetLink ? `
-              <a href="${escapeHtml(r.DatasetLink)}" target="_blank" 
-                 style="color: #059669; font-size: 12px; text-decoration: none; 
-                        background-color: #ecfdf5; padding: 2px 6px; border-radius: 4px; 
-                        border: 1px solid #d1fae5; display: inline-block;">
-                🔗 View Dataset →
+              <a href="${escapeHtml(r.DatasetLink)}" target="_blank" style="color: #059669; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 2px;">
+                🔗 View Dataset
               </a>
-            ` : '<div style="color: #9ca3af; font-size: 12px;">No link provided</div>'}
+            ` : '<span style="color: #9ca3af; font-size: 12px;">No link provided</span>'}
           </td>
           <td style="max-width: 200px; word-wrap: break-word;">${escapeHtml(r.Goal)}</td>
           <td>${escapeHtml(r.Teacher)}</td>
