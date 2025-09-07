@@ -242,7 +242,23 @@
     }
     function markInvalid(el, invalid) { el.classList.toggle('invalid', !!invalid); }
 
-    // Live feedback (no blocking of typing)
+    // Wait for Transformers.js to be ready (handles slow network/UMD attach)
+    async function waitForTransformers(timeoutMs = 15000) {
+      if (window.transformers && window.transformers.pipeline) return window.transformers;
+      const start = Date.now();
+      return new Promise((resolve, reject) => {
+        const timer = setInterval(() => {
+          if (window.transformers && window.transformers.pipeline) {
+            clearInterval(timer);
+            resolve(window.transformers);
+          } else if (Date.now() - start > timeoutMs) {
+            clearInterval(timer);
+            reject(new Error('Transformers.js failed to load. Please check your network or try again.'));
+          }
+        }, 100);
+      });
+    }
+// Live feedback (no blocking of typing)
     input.studentId.addEventListener('input', () => {
       input.studentId.value = input.studentId.value.replace(/\D/g, '').slice(0, 12);
       markInvalid(input.studentId, input.studentId.value && !validateStudentID(input.studentId.value));
@@ -331,8 +347,11 @@
     // AI similarity functions
     async function ensureEmbedderLoaded() {
       if (!embedder) {
-        embedder = await window.transformers.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+        const tf = await waitForTransformers();
+        const { pipeline } = tf;
+        embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
       }
+    }
     }
     async function embedText(text) {
       const out = await embedder(text, { pooling: 'mean', normalize: true });
