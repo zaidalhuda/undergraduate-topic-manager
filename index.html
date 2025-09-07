@@ -6,10 +6,7 @@
   <title>Undergrad Topic Booking</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f5f5f5; color: #333; line-height: 1.6; padding: 20px;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f5f5f5; color: #333; line-height: 1.6; padding: 20px; }
     .container { max-width: 1200px; margin: 0 auto; }
     .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .header h1 { font-size: 24px; color: #2563eb; margin-bottom: 5px; }
@@ -20,7 +17,7 @@
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
     @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
     label { display: block; margin-bottom: 5px; font-weight: 500; color: #333; }
-    input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+    input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; transition: border-color .15s, background-color .15s; }
     input:focus, textarea:focus, select:focus { outline: none; border-color: #2563eb; }
     small.help { display:block; color:#6b7280; margin-top:6px; }
     textarea { resize: vertical; min-height: 80px; }
@@ -39,7 +36,7 @@
     .filters input { flex: 1; min-width: 150px; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     table th { background-color: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e5e7eb; }
-    table td { padding: 12px; border-bottom: 1px solid #e5e7eb; }
+    table td { padding: 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
     table tr:hover { background-color: #f8f9fa; }
     .loading { text-align: center; padding: 20px; color: #666; }
     .empty-state { text-align: center; padding: 40px 20px; color: #666; }
@@ -53,6 +50,9 @@
     @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } }
     .hidden { display: none; }
     .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #f3f3f3; border-top: 2px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px; }
+    .invalid { border-color: #ef4444; background-color: #fff7f7; }
+    .error-list { margin-top: 10px; }
+    .error-list li { margin-left: 18px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
@@ -75,6 +75,7 @@
             <div class="form-group">
               <label>Student Name</label>
               <input id="studentName" placeholder="e.g., Sara Ali" />
+              <small class="help">Letters only (any language), spaces, hyphens, apostrophes allowed.</small>
             </div>
             <div class="form-group">
               <label>Student ID (CDU)</label>
@@ -108,21 +109,7 @@
             <label>Supervisor</label>
             <select id="teacher">
               <option value="">Select supervisor...</option>
-              <option>Zaid</option>
-              <option>Martin</option>
-              <option>Taha</option>
-              <option>Javed</option>
-              <option>Joao</option>
-              <option>Pedro</option>
-              <option>Linda</option>
-              <option>James</option>
-              <option>Meropi</option>
-              <option>Isaac</option>
-              <option>Cezar</option>
-              <option>Gladys</option>
-              <option>Stacy</option>
-              <option>IJ</option>
-              <option>Yuefei</option>
+              <!-- options are populated dynamically in alpha order -->
             </select>
           </div>
 
@@ -142,8 +129,8 @@
         <!-- Add Section -->
         <div class="card">
           <h2>Add Booking</h2>
-          <p style="margin-bottom: 15px; color: #666;">Submit your topic if it's available.</p>
-
+          <p style="margin-bottom: 10px; color: #666;">Submit your topic if it's available.</p>
+          <div id="validationErrors" class="hidden status status-error"></div>
           <button id="addBtn" class="btn btn-full">Add to Sheet</button>
           <div id="addStatus" style="margin-top: 10px; text-align: center;"></div>
         </div>
@@ -187,8 +174,9 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-XvLRaoqMynEZvgpaQJf2en2ikVEVCGKx5g2qtSbZJMFehLkvFPbWgZgmr0IPlLFnPw/exec';
     const API_TOKEN = 'my-secret-123';
 
-    // Allowed supervisors (must match dropdown)
-    const TEACHERS = ['Zaid','Martin','Taha','Javed','Joao','Pedro','Linda','James','Meropi','Isaac','Cezar','Gladys','Stacy','IJ','Yuefei'];
+    // Teachers (alpha sorted)
+    const TEACHERS = ['Zaid','Martin','Taha','Javed','Joao','Pedro','Linda','James','Meropi','Isaac','Cezar','Gladys','Stacy','IJ','Yuefei']
+      .sort((a,b) => a.localeCompare(b));
 
     // Elements
     const input = {
@@ -208,6 +196,7 @@
     const conflictsBox = document.getElementById('conflicts');
     const addBtn = document.getElementById('addBtn');
     const addStatus = document.getElementById('addStatus');
+    const validationErrors = document.getElementById('validationErrors');
     const filterText = document.getElementById('filterText');
     const filterTeacher = document.getElementById('filterTeacher');
     const clearFilters = document.getElementById('clearFilters');
@@ -215,6 +204,16 @@
 
     let allRows = [];
     let embedder = null;
+
+    // Populate teachers dropdown (alpha)
+    function populateTeachers() {
+      for (const t of TEACHERS) {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        input.teacher.appendChild(opt);
+      }
+    }
 
     // Helpers
     function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str ?? ''; return div.innerHTML; }
@@ -225,10 +224,30 @@
       return '<span class="status status-warning">' + escapeHtml(status || 'Unknown') + '</span>';
     }
     function validateStudentID(id) { return /^2021\\d{8}$/.test(id); }
+    function validateName(name) { return /^[\\p{L}][\\p{L} .'-]{1,59}$/u.test(name); } // Unicode letters + allowed chars
+    function isValidURL(url) {
+      if (!url) return true; // optional
+      try {
+        const u = new URL(url);
+        return u.protocol === 'http:' || u.protocol === 'https:';
+      } catch { return false; }
+    }
 
-    // Live sanitize SID input (digits only, max 12)
+    function markInvalid(el, invalid) { el.classList.toggle('invalid', !!invalid); }
+
+    // Live sanitize inputs
     input.studentId.addEventListener('input', () => {
       input.studentId.value = input.studentId.value.replace(/\\D/g, '').slice(0, 12);
+      markInvalid(input.studentId, input.studentId.value && !validateStudentID(input.studentId.value));
+    });
+    input.studentName.addEventListener('input', () => {
+      // allow only letters, spaces and selected punctuation
+      const cleaned = input.studentName.value.replace(/[^\\p{L} .'-]/gu, '');
+      if (cleaned !== input.studentName.value) input.studentName.value = cleaned;
+      markInvalid(input.studentName, input.studentName.value && !validateName(input.studentName.value.trim()));
+    });
+    input.datasetLink.addEventListener('input', () => {
+      markInvalid(input.datasetLink, input.datasetLink.value && !isValidURL(input.datasetLink.value));
     });
 
     // Event listeners
@@ -254,8 +273,6 @@
           Timestamp: r.Timestamp ? new Date(r.Timestamp) : '',
           StudentName: r.StudentName || '',
           StudentID: r.StudentID || '',
-          Email: '', // deprecated in UI
-          Program: '', // deprecated in UI
           TopicTitle: r.TopicTitle || '',
           Dataset: r.Dataset || '',
           DatasetLink: r.DatasetLink || '',
@@ -271,7 +288,7 @@
       }
     }
 
-    // Render table rows
+    // Render table rows (ensure dataset name is visible)
     function renderRows() {
       const searchText = filterText.value.toLowerCase();
       const teacherFilter = filterTeacher.value.toLowerCase();
@@ -297,10 +314,10 @@
           </td>
           <td>${escapeHtml(r.TopicTitle)}</td>
           <td>
-            <div>${escapeHtml(r.Dataset)}</div>
+            <div><strong>${escapeHtml(r.Dataset)}</strong></div>
             ${r.DatasetLink ? `<a href="${r.DatasetLink}" target="_blank" style="color: #2563eb; font-size: 12px;">View Dataset →</a>` : ''}
           </td>
-          <td style="max-width: 200px; word-wrap: break-word;">${escapeHtml(r.Goal)}</td>
+          <td style="max-width: 260px; word-wrap: break-word;">${escapeHtml(r.Goal)}</td>
           <td>${escapeHtml(r.Teacher)}</td>
           <td>${getStatusBadge(r.Status)}</td>
         </tr>
@@ -328,16 +345,55 @@
       return sameDataset;
     }
 
-    // Check availability
+    // Validate all fields and return {ok, errors}
+    function validateAll(forAdd = true) {
+      const errors = [];
+
+      const name = input.studentName.value.trim();
+      const sid  = input.studentId.value.trim();
+      const topic = input.topicTitle.value.trim();
+      const dname = input.dataset.value.trim();
+      const durl  = input.datasetLink.value.trim();
+      const teacher = input.teacher.value.trim();
+
+      // Reset invalid styles
+      [input.studentName, input.studentId, input.topicTitle, input.dataset, input.datasetLink, input.teacher]
+        .forEach(el => markInvalid(el, false));
+
+      if (!validateName(name)) { errors.push('Student Name must contain letters only (plus spaces, hyphens, apostrophes).'); markInvalid(input.studentName, true); }
+      if (!validateStudentID(sid)) { errors.push('Student ID must be 12 digits and start with 2021.'); markInvalid(input.studentId, true); }
+      if (forAdd && !topic) { errors.push('Topic Title is required.'); markInvalid(input.topicTitle, true); }
+      if (forAdd && !dname) { errors.push('Dataset Name is required.'); markInvalid(input.dataset, true); }
+      if (!isValidURL(durl)) { errors.push('Dataset URL must be a valid http/https link.'); markInvalid(input.datasetLink, true); }
+      if (forAdd && !teacher) { errors.push('Please select a Supervisor.'); markInvalid(input.teacher, true); }
+      if (teacher && !TEACHERS.includes(teacher)) { errors.push('Supervisor must be from the list.'); markInvalid(input.teacher, true); }
+
+      return { ok: errors.length === 0, errors };
+    }
+
+    function showErrors(list) {
+      if (!list || list.length === 0) { validationErrors.classList.add('hidden'); validationErrors.innerHTML = ''; return; }
+      validationErrors.innerHTML = '<ul class="error-list"><li>' + list.map(e => escapeHtml(e)).join('</li><li>') + '</li></ul>';
+      validationErrors.classList.remove('hidden');
+    }
+
+    // Check availability (also light validation of name/ID so users see issues early)
     async function checkAvailability() {
       checkBtn.innerHTML = '<span class="spinner"></span>Checking...';
       checkBtn.disabled = true;
-
       availabilityNote.innerHTML = '';
       conflictsBox.innerHTML = '';
       checkResult.classList.remove('hidden');
+      showErrors([]);
 
       try {
+        const basic = validateAll(false);
+        if (!basic.ok) {
+          showErrors(basic.errors);
+          availabilityNote.innerHTML = '<div class="status status-warning">Please fix the highlighted fields.</div>';
+          return;
+        }
+
         const candidate = {
           TopicTitle: input.topicTitle.value.trim(),
           Dataset: input.dataset.value.trim(),
@@ -413,13 +469,18 @@
       addBtn.innerHTML = '<span class="spinner"></span>Adding...';
       addBtn.disabled = true;
       addStatus.textContent = '';
+      showErrors([]);
 
       try {
+        const v = validateAll(true);
+        if (!v.ok) {
+          showErrors(v.errors);
+          throw new Error('Please fix the highlighted fields.');
+        }
+
         const payload = {
           StudentName: input.studentName.value.trim(),
           StudentID: input.studentId.value.trim(),
-          Email: '',    // removed from UI
-          Program: '',  // removed from UI
           TopicTitle: input.topicTitle.value.trim(),
           Dataset: input.dataset.value.trim(),
           DatasetLink: input.datasetLink.value.trim(),
@@ -428,17 +489,6 @@
           Status: 'Booked',
           Notes: ''
         };
-
-        // Validate required fields
-        if (!payload.StudentName || !payload.TopicTitle || !payload.Dataset || !payload.Teacher) {
-          throw new Error('Please fill in required fields: Student Name, Topic Title, Dataset Name, and Supervisor');
-        }
-        if (!validateStudentID(payload.StudentID)) {
-          throw new Error('Student ID must be 12 digits and start with 2021 (e.g., 2021XXXXXXXX)');
-        }
-        if (!TEACHERS.includes(payload.Teacher)) {
-          throw new Error('Please choose a Supervisor from the list');
-        }
 
         const formData = new FormData();
         formData.append('token', API_TOKEN);
@@ -450,17 +500,17 @@
 
         if (data && data.ok) {
           addStatus.innerHTML = '<div class="status status-success">✅ Added successfully</div>';
-          // Clear form (only known inputs)
+          // Clear form
           Object.values(input).forEach(el => { if (el && 'value' in el) el.value = ''; });
-          // Refresh data
+          validationErrors.classList.add('hidden');
+          validationErrors.innerHTML = '';
           await loadRows();
-          // Hide check results
           checkResult.classList.add('hidden');
         } else {
           throw new Error('Unexpected response format');
         }
       } catch (err) {
-        addStatus.innerHTML = `<div class="status status-error">❌ Error: ${err.message}</div>`;
+        addStatus.innerHTML = `<div class="status status-error">❌ ${escapeHtml(err.message)}</div>`;
       } finally {
         addBtn.innerHTML = 'Add to Sheet';
         addBtn.disabled = false;
@@ -468,6 +518,7 @@
     }
 
     // Initialize
+    populateTeachers();
     loadRows();
   </script>
 </body>
