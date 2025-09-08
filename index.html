@@ -704,19 +704,13 @@
         const payload = {
           StudentName: input.studentName.value.trim(),
           StudentID: input.studentId.value.trim(),
-          Email: '', // Not collected anymore
-          Program: '', // Not collected anymore
           TopicTitle: input.topicTitle.value.trim(),
-          // Dataset fields: send multiple synonyms to match sheet headers
           'Dataset Name': input.dataset.value.trim(),
-          Dataset: input.dataset.value.trim(),
           'Dataset Link': input.datasetLink.value.trim(),
-          'Dataset URL': input.datasetLink.value.trim(),
           DatasetLink: input.datasetLink.value.trim(),
           Goal: input.goal.value.trim(),
           Teacher: input.teacher.value,
-          Status: 'Booked',
-          Notes: ''
+          Status: 'Booked'
         };
 
         if (!payload.StudentName || !payload.TopicTitle || !payload.Teacher) {
