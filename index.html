@@ -108,16 +108,6 @@
       min-height: 80px;
     }
     
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 15px 0;
-      padding: 10px;
-      background-color: #f8f9fa;
-      border-radius: 4px;
-    }
-    
     .btn {
       background-color: #2563eb;
       color: white;
@@ -365,11 +355,6 @@
             </select>
           </div>
 
-          <div class="checkbox-group">
-            <input type="checkbox" id="smartCheck" />
-            <label for="smartCheck">Use AI similarity check (free, on-device)</label>
-          </div>
-
           <button id="checkBtn" class="btn btn-full">Check Availability</button>
 
           <div id="checkResult" class="hidden">
@@ -418,9 +403,6 @@
     </div>
   </div>
 
-  <!-- Transformers.js for AI similarity -->
-  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@3.0.0/dist/transformers.min.js"></script>
-
   <script>
     // Configuration
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxv7iau-cZ0iF29D3EaFehf0q5xoBJ2iOV0O7Pz2R_-bxRZDnt3S9DY1-jGDtiK0iKaLg/exec';
@@ -451,7 +433,6 @@
     };
 
     const checkBtn = document.getElementById('checkBtn');
-    const smartCheck = document.getElementById('smartCheck');
     const checkResult = document.getElementById('checkResult');
     const availabilityNote = document.getElementById('availabilityNote');
     const conflictsBox = document.getElementById('conflicts');
@@ -464,7 +445,6 @@
     const studentIdError = document.getElementById('studentIdError');
 
     let allRows = [];
-    let embedder = null;
 
     // Student ID validation
     function validateStudentId(value) {
@@ -588,25 +568,7 @@
       return div.innerHTML;
     }
 
-    // AI similarity functions
-    async function ensureEmbedderLoaded() {
-      if (!embedder) {
-        embedder = await window.transformers.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-      }
-    }
-
-    async function embedText(text) {
-      const out = await embedder(text, { pooling: 'mean', normalize: true });
-      return Array.from(out.data);
-    }
-
-    function cosineSim(a, b) {
-      let sum = 0;
-      for (let i = 0; i < a.length; i++) sum += a[i] * b[i];
-      return sum;
-    }
-
-    // Check conflicts
+    // Check conflicts (simple, exact-match based)
     function isExactConflict(newRow, existingRow) {
       const sameTopic = newRow.TopicTitle.toLowerCase() === existingRow.TopicTitle.toLowerCase();
       if (sameTopic) return true;
@@ -639,26 +601,14 @@
         }
 
         let matches = [];
-        
-        if (smartCheck.checked) {
-          await ensureEmbedderLoaded();
-          const candVec = await embedText(`${candidate.TopicTitle} ${candidate.Dataset} ${candidate.Goal}`);
-          
-          for (const r of allRows) {
-            const rVec = await embedText(`${r.TopicTitle} ${r.Dataset} ${r.Goal}`);
-            const score = cosineSim(candVec, rVec);
-            matches.push({ r, score, isConflict: isExactConflict(candidate, r) });
-          }
-        } else {
-          for (const r of allRows) {
-            const isConflict = isExactConflict(candidate, r);
-            matches.push({ r, score: isConflict ? 1 : 0, isConflict });
-          }
+        for (const r of allRows) {
+          const isConflict = isExactConflict(candidate, r);
+          matches.push({ r, score: isConflict ? 1 : 0, isConflict });
         }
 
         matches.sort((a, b) => b.score - a.score);
-        const highConflicts = matches.filter(x => x.score >= 0.85 || x.isConflict);
-        const mediumConflicts = matches.filter(x => x.score >= 0.6 && x.score < 0.85);
+        const highConflicts = matches.filter(x => x.isConflict);
+        const mediumConflicts = []; // no AI similarity, so we skip fuzzy matches
 
         if (highConflicts.length > 0) {
           availabilityNote.innerHTML = '<div class="status status-error">❌ Conflict - topic appears to be taken</div>';
@@ -668,16 +618,16 @@
           availabilityNote.innerHTML = '<div class="status status-success">✅ Available - no conflicts found</div>';
         }
 
-        const topMatches = matches.slice(0, 5).filter(x => x.score > 0.1);
+        const topMatches = matches.filter(x => x.isConflict);
         if (topMatches.length > 0) {
           conflictsBox.innerHTML = `
             <div class="conflicts">
-              <h4 style="margin-bottom: 10px;">Similar Topics:</h4>
-              ${topMatches.map(({r, score}) => `
+              <h4 style="margin-bottom: 10px;">Exact Conflicts:</h4>
+              ${topMatches.map(({r}) => `
                 <div class="conflict-item">
                   <div class="conflict-header">
                     <div class="conflict-title">${escapeHtml(r.TopicTitle)}</div>
-                    <div class="similarity-score">${(score * 100).toFixed(1)}% similar</div>
+                    <div class="similarity-score">Exact match</div>
                   </div>
                   <div class="conflict-details">
                     <strong>Dataset:</strong> ${escapeHtml(r.Dataset)}<br>
