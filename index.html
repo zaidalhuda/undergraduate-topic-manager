@@ -234,7 +234,7 @@
     
     .conflict-header {
       display: flex;
-      justify-content: between;
+      justify-content: space-between;
       align-items: center;
       margin-bottom: 8px;
     }
@@ -406,10 +406,10 @@
                 <th>Student</th>
                 <th>Topic</th>
                 <th>Dataset</th>
-               <th>Goal</th>
+                <th>Goal</th>
                 <th>Teacher</th>
                 <th>Status</th>
-                              <th>Link</th>
+                <th>Link</th>
               </tr>
             </thead>
             <tbody id="rows"></tbody>
@@ -486,7 +486,7 @@
 
     // Load data
     async function loadRows() {
-      rowsTbody.innerHTML = '<tr><td colspan="7" class="loading">Loading...</td></tr>';
+      rowsTbody.innerHTML = '<tr><td colspan="8" class="loading">Loading...</td></tr>';
       
       try {
         const url = `${SCRIPT_URL}?action=list&token=${encodeURIComponent(API_TOKEN)}`;
@@ -510,8 +510,8 @@
           Email: r.Email || '',
           Program: r.Program || '',
           TopicTitle: r.TopicTitle || '',
-          Dataset: (r['Dataset Name'] || r.Dataset || ''),
-          DatasetLink: (r['Dataset Link'] || r['Dataset URL'] || r.DatasetLink || ''),
+          Dataset: r['Dataset Name'] || r.Dataset || '',
+          DatasetLink: r['Dataset Link'] || r['Dataset URL'] || r.DatasetLink || '',
           Goal: r.Goal || '',
           Teacher: r.Teacher || '',
           Status: r.Status || 'Booked',
@@ -520,11 +520,11 @@
         
         renderRows();
       } catch (err) {
-        rowsTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">Error: ${err.message}</td></tr>`;
+        rowsTbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #ef4444; padding: 20px;">Error: ${err.message}</td></tr>`;
       }
     }
 
-    // Render table rows
+    // Render table rows - FIXED: Now renders all 8 columns including Link
     function renderRows() {
       const searchText = filterText.value.toLowerCase();
       const teacherFilter = filterTeacher.value.toLowerCase();
@@ -537,7 +537,7 @@
       });
 
       if (filtered.length === 0) {
-        rowsTbody.innerHTML = '<tr><td colspan="7" class="empty-state">No bookings found</td></tr>';
+        rowsTbody.innerHTML = '<tr><td colspan="8" class="empty-state">No bookings found</td></tr>';
         return;
       }
 
@@ -550,16 +550,18 @@
           </td>
           <td>${escapeHtml(r.TopicTitle)}</td>
           <td>
-            <div style="font-weight: 500; color: #2563eb; margin-bottom: 4px;">${escapeHtml(r.Dataset || 'No dataset specified')}</div>
-            ${r.DatasetLink ? `
-              <a href="${escapeHtml(r.DatasetLink)}" target="_blank" style="color: #059669; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 2px;">
-                🔗 View Dataset
-              </a>
-            ` : '<span style="color: #9ca3af; font-size: 12px;">No link provided</span>'}
+            <div style="font-weight: 500; color: #2563eb;">${escapeHtml(r.Dataset || 'No dataset specified')}</div>
           </td>
           <td style="max-width: 200px; word-wrap: break-word;">${escapeHtml(r.Goal)}</td>
           <td>${escapeHtml(r.Teacher)}</td>
           <td>${getStatusBadge(r.Status)}</td>
+          <td>
+            ${r.DatasetLink ? `
+              <a href="${escapeHtml(r.DatasetLink)}" target="_blank" style="color: #059669; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                🔗 Open
+              </a>
+            ` : '<span style="color: #9ca3af; font-size: 12px;">No link</span>'}
+          </td>
         </tr>
       `).join('');
     }
@@ -688,7 +690,7 @@
       }
     }
 
-    // Add booking
+    // FIXED: Simplified and consistent field mapping
     async function addBooking() {
       // Validate Student ID
       const studentIdValue = input.studentId.value.trim();
@@ -702,21 +704,16 @@
       addStatus.textContent = '';
 
       try {
+        // Simplified payload - use consistent field names
         const payload = {
           StudentName: input.studentName.value.trim(),
           StudentID: input.studentId.value.trim(),
-          Email: '',
-          Program: '',
           TopicTitle: input.topicTitle.value.trim(),
           'Dataset Name': input.dataset.value.trim(),
-          Dataset: input.dataset.value.trim(),
           'Dataset Link': input.datasetLink.value.trim(),
-          'Dataset URL': input.datasetLink.value.trim(),
-          DatasetLink: input.datasetLink.value.trim(),
           Goal: input.goal.value.trim(),
           Teacher: input.teacher.value,
-          Status: 'Booked',
-          Notes: ''
+          Status: 'Booked'
         };
 
         if (!payload.StudentName || !payload.TopicTitle || !payload.Teacher) {
@@ -771,42 +768,3 @@
   </script>
 </body>
 </html>
-
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  try {
-    const table = Array.from(document.querySelectorAll('h2, h3'))
-      .find(h => /Current\s*Bookings/i.test(h.textContent));
-    if (!table) return;
-    // Find the table immediately following the header
-    let t = table.nextElementSibling;
-    while (t && t.tagName !== 'TABLE') t = t.nextElementSibling;
-    if (!t) return;
-    const rows = t.querySelectorAll('tbody tr');
-    rows.forEach(tr => {
-      const dsNameCell = tr.querySelector('td:nth-child(4)'); // assuming Dataset name is 4th data col
-      let link = '';
-      // try data-link attribute first
-      if (tr.dataset && tr.dataset.datasetLink) link = tr.dataset.datasetLink;
-      // try a hidden cell with data-dataset-link
-      if (!link) {
-        const hidden = tr.querySelector('[data-dataset-link]');
-        if (hidden) link = hidden.getAttribute('data-dataset-link');
-      }
-      // try a global row cache if present
-      if (!link && window.rowCache && window.rowCache.has(tr)) {
-        link = window.rowCache.get(tr).DatasetLink || '';
-      }
-      // finally, try to parse from dataset name cell if it contains an <a>
-      if (!link && dsNameCell) {
-        const a = dsNameCell.querySelector('a[href]');
-        if (a) link = a.getAttribute('href');
-      }
-      const td = document.createElement('td');
-      td.innerHTML = link ? '<a href="' + link + '" target="_blank">Open</a>' : '';
-      tr.appendChild(td);
-    });
-  } catch(e) { console.warn('Post-render patch for Link column failed:', e); }
-});
-</script>
