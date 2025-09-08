@@ -406,7 +406,7 @@
                 <th>Student</th>
                 <th>Topic</th>
                 <th>Dataset</th>
-               <th>Goal</th>
+                <th>Goal</th>
                 <th>Teacher</th>
                 <th>Status</th>
               </tr>
@@ -425,6 +425,22 @@
     // Configuration
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-XvLRaoqMynEZvgpaQJf2en2ikVEVCGKx5g2qtSbZJMFehLkvFPbWgZgmr0IPlLFnPw/exec';
     const API_TOKEN = 'my-secret-123';
+
+    // Sheet column mapping constants
+    const SHEET_COLUMNS = {
+      STUDENT_NAME: 'StudentName',
+      STUDENT_ID: 'StudentID', 
+      EMAIL: 'Email',
+      PROGRAM: 'Program',
+      TOPIC_TITLE: 'TopicTitle',
+      DATASET_NAME: 'Dataset Name',    // Note: this one has spaces
+      DATASET_LINK: 'Dataset Link',    // Note: this one has spaces
+      GOAL: 'Goal',
+      TEACHER: 'Teacher',
+      STATUS: 'Status',
+      NOTES: 'Notes',
+      TIMESTAMP: 'Timestamp'
+    };
 
     // Elements
     const input = {
@@ -503,18 +519,18 @@
         
         allRows = (data.rows || []).map((r, idx) => ({
           idx,
-          Timestamp: r.Timestamp ? new Date(r.Timestamp) : '',
-          StudentName: r.StudentName || '',
-          StudentID: r.StudentID || '',
-          Email: r.Email || '',
-          Program: r.Program || '',
-          TopicTitle: r.TopicTitle || '',
-          Dataset: (r['Dataset Name'] || r.Dataset || ''),
-          DatasetLink: (r['Dataset Link'] || r.DatasetLink || ''),
-          Goal: r.Goal || '',
-          Teacher: r.Teacher || '',
-          Status: r.Status || 'Booked',
-          Notes: r.Notes || ''
+          Timestamp: r[SHEET_COLUMNS.TIMESTAMP] ? new Date(r[SHEET_COLUMNS.TIMESTAMP]) : '',
+          StudentName: r[SHEET_COLUMNS.STUDENT_NAME] || '',
+          StudentID: r[SHEET_COLUMNS.STUDENT_ID] || '',
+          Email: r[SHEET_COLUMNS.EMAIL] || '',
+          Program: r[SHEET_COLUMNS.PROGRAM] || '',
+          TopicTitle: r[SHEET_COLUMNS.TOPIC_TITLE] || '',
+          Dataset: (r[SHEET_COLUMNS.DATASET_NAME] || r.Dataset || ''),
+          DatasetLink: (r[SHEET_COLUMNS.DATASET_LINK] || r.DatasetLink || ''),
+          Goal: r[SHEET_COLUMNS.GOAL] || '',
+          Teacher: r[SHEET_COLUMNS.TEACHER] || '',
+          Status: r[SHEET_COLUMNS.STATUS] || 'Booked',
+          Notes: r[SHEET_COLUMNS.NOTES] || ''
         }));
         
         renderRows();
@@ -701,21 +717,22 @@
       addStatus.textContent = '';
 
       try {
+        // Collect form data into payload object using SHEET_COLUMNS constants
         const payload = {
-          StudentName: input.studentName.value.trim(),
-          StudentID: input.studentId.value.trim(),
-          Email: '', // Not collected anymore
-          Program: '', // Not collected anymore
-          TopicTitle: input.topicTitle.value.trim(),
-          'Dataset Name': input.dataset.value.trim(), // Match Google Sheet column name
-          'Dataset Link': input.datasetLink.value.trim(), // Match Google Sheet column name
-          Goal: input.goal.value.trim(),
-          Teacher: input.teacher.value,
-          Status: 'Booked',
-          Notes: ''
+          [SHEET_COLUMNS.STUDENT_NAME]: input.studentName.value.trim(),
+          [SHEET_COLUMNS.STUDENT_ID]: input.studentId.value.trim(),
+          [SHEET_COLUMNS.EMAIL]: '',
+          [SHEET_COLUMNS.PROGRAM]: '',
+          [SHEET_COLUMNS.TOPIC_TITLE]: input.topicTitle.value.trim(),
+          [SHEET_COLUMNS.DATASET_NAME]: input.dataset.value.trim(),
+          [SHEET_COLUMNS.DATASET_LINK]: input.datasetLink.value.trim(),
+          [SHEET_COLUMNS.GOAL]: input.goal.value.trim(),
+          [SHEET_COLUMNS.TEACHER]: input.teacher.value,
+          [SHEET_COLUMNS.STATUS]: 'Booked',
+          [SHEET_COLUMNS.NOTES]: ''
         };
 
-        if (!payload.StudentName || !payload.TopicTitle || !payload.Teacher) {
+        if (!payload[SHEET_COLUMNS.STUDENT_NAME] || !payload[SHEET_COLUMNS.TOPIC_TITLE] || !payload[SHEET_COLUMNS.TEACHER]) {
           throw new Error('Please fill in required fields: Student Name, Topic Title, and Teacher');
         }
 
@@ -767,7 +784,6 @@
   </script>
 </body>
 </html>
-
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
