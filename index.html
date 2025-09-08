@@ -375,33 +375,6 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-
-    .duplicate-warning {
-      background-color: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 10px;
-    }
-
-    .duplicate-warning h4 {
-      color: #991b1b;
-      font-size: 14px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .duplicate-warning .duplicate-details {
-      color: #7f1d1d;
-      font-size: 13px;
-      line-height: 1.4;
-    }
-
-    .duplicate-warning .duplicate-details strong {
-      color: #991b1b;
-    }
   </style>
 </head>
 <body>
@@ -638,14 +611,6 @@
       };
     }
 
-    // Check for duplicate Student ID
-    function checkDuplicateStudentId(studentId) {
-      if (!studentId) return null;
-      
-      const normalizedId = studentId.trim();
-      return allRows.find(row => row.StudentID && row.StudentID.trim() === normalizedId);
-    }
-
     // Student ID validation
     function validateStudentId(value) {
       const pattern = /^2021\d{8}$/;
@@ -790,26 +755,6 @@
           return;
         }
 
-        // Check for duplicate Student ID first
-        const studentIdValue = input.studentId.value.trim();
-        const duplicateStudent = checkDuplicateStudentId(studentIdValue);
-        
-        if (duplicateStudent) {
-          const duplicateWarningHtml = `
-            <div class="duplicate-warning">
-              <h4>⚠️ Student ID Already Exists</h4>
-              <div class="duplicate-details">
-                <strong>Student:</strong> ${escapeHtml(duplicateStudent.StudentName)}<br>
-                <strong>Topic:</strong> ${escapeHtml(duplicateStudent.TopicTitle)}<br>
-                <strong>Teacher:</strong> ${escapeHtml(duplicateStudent.Teacher)}<br>
-                <strong>Status:</strong> ${escapeHtml(duplicateStudent.Status)}
-              </div>
-            </div>
-          `;
-          availabilityNote.innerHTML = '<div class="status status-error">❌ Student ID already has a booking</div>' + duplicateWarningHtml;
-          return;
-        }
-
         // Analyze all conflicts
         let conflicts = [];
         for (const r of allRows) {
@@ -942,32 +887,12 @@
       return 'similarity-none';
     }
 
-    // Add booking with duplicate check
+    // Add booking
     async function addBooking() {
-      // Validate Student ID format
+      // Validate Student ID
       const studentIdValue = input.studentId.value.trim();
       if (studentIdValue && !validateStudentId(studentIdValue)) {
         addStatus.innerHTML = '<div class="status status-error">❌ Invalid Student ID format</div>';
-        return;
-      }
-
-      // Check for duplicate Student ID BEFORE proceeding
-      const duplicateStudent = checkDuplicateStudentId(studentIdValue);
-      if (duplicateStudent) {
-        const duplicateWarningHtml = `
-          <div class="duplicate-warning">
-            <h4>⚠️ Student ID Already Exists</h4>
-            <div class="duplicate-details">
-              This student ID already has a booking:<br>
-              <strong>Student:</strong> ${escapeHtml(duplicateStudent.StudentName)}<br>
-              <strong>Topic:</strong> ${escapeHtml(duplicateStudent.TopicTitle)}<br>
-              <strong>Teacher:</strong> ${escapeHtml(duplicateStudent.Teacher)}<br>
-              <strong>Status:</strong> ${escapeHtml(duplicateStudent.Status)}<br><br>
-              Each student can only have one booking. Please contact your supervisor if you need to modify your existing booking.
-            </div>
-          </div>
-        `;
-        addStatus.innerHTML = '<div class="status status-error">❌ Cannot add booking - Student ID already exists</div>' + duplicateWarningHtml;
         return;
       }
 
@@ -1034,30 +959,6 @@
         addBtn.disabled = false;
       }
     }
-
-    // Test function for debugging duplicate detection
-    window.testDuplicateCheck = function() {
-      console.log('🧪 TESTING DUPLICATE CHECK SYSTEM');
-      console.log('📊 Current data state:');
-      console.log('  - Total rows loaded:', allRows.length);
-      console.log('  - Sample rows:', allRows.slice(0, 3));
-      
-      const testId = input.studentId.value.trim();
-      console.log('🔍 Testing Student ID:', testId);
-      
-      if (!testId) {
-        alert('Please enter a Student ID to test');
-        return;
-      }
-      
-      const duplicate = checkDuplicateStudentId(testId);
-      
-      if (duplicate) {
-        alert(`🚨 DUPLICATE FOUND!\nStudent: ${duplicate.StudentName}\nTopic: ${duplicate.TopicTitle}\nTeacher: ${duplicate.Teacher}`);
-      } else {
-        alert('✅ No duplicate found - this Student ID is available');
-      }
-    };
 
     // Initialize
     loadRows();
