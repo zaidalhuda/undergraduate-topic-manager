@@ -6,102 +6,54 @@
   <title>Undergrad Topic Booking</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f5f5f5;
-      color: #333;
-      line-height: 1.6;
-      padding: 20px; /* Set to 0 if you want no outer spacing */
-    }
-
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f5f5f5; color: #333; line-height: 1.6; padding: 20px; }
     .container { max-width: 1200px; margin: 0 auto; }
-    .header {
-      background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+    .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .header h1 { font-size: 24px; color: #2563eb; margin-bottom: 5px; }
     .header p { color: #666; margin-bottom: 15px; }
-
-    .card {
-      background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+    .card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .card h2 { font-size: 18px; margin-bottom: 15px; color: #333; }
-
     .form-group { margin-bottom: 15px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
     @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
-
     label { display: block; margin-bottom: 5px; font-weight: 500; color: #333; }
-    input, textarea, select {
-      width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;
-    }
+    input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
     input:focus, textarea:focus, select:focus { outline: none; border-color: #2563eb; }
     input.error { border-color: #ef4444; }
     .error-message { color: #ef4444; font-size: 12px; margin-top: 5px; }
     textarea { resize: vertical; min-height: 80px; }
-
-    .checkbox-group {
-      display: flex; align-items: center; gap: 8px; margin: 15px 0; padding: 10px;
-      background-color: #f8f9fa; border-radius: 4px;
-    }
-
-    .btn {
-      background-color: #2563eb; color: white; border: none; padding: 12px 20px;
-      border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500;
-    }
+    .checkbox-group { display: flex; align-items: center; gap: 8px; margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-radius: 4px; }
+    .btn { background-color: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; }
     .btn:hover { background-color: #1d4ed8; }
     .btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
     .btn-secondary { background-color: #6b7280; }
     .btn-secondary:hover { background-color: #4b5563; }
     .btn-full { width: 100%; }
-
-    .status {
-      padding: 8px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; display: inline-block;
-    }
+    .status { padding: 8px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; display: inline-block; }
     .status-success { background-color: #dcfce7; color: #166534; }
     .status-error { background-color: #fee2e2; color: #991b1b; }
     .status-warning { background-color: #fef3c7; color: #92400e; }
-
     .filters { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
     .filters input { flex: 1; min-width: 150px; }
-
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    table th {
-      background-color: #f8f9fa; padding: 12px; text-align: left; font-weight: 600;
-      border-bottom: 2px solid #e5e7eb;
-    }
-    table td { padding: 12px; border-bottom: 1px solid #e5e7eb; }
+    table th { background-color: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e5e7eb; }
+    table td { padding: 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
     table tr:hover { background-color: #f8f9fa; }
-
     .loading { text-align: center; padding: 20px; color: #666; }
     .empty-state { text-align: center; padding: 40px 20px; color: #666; }
-
     .conflicts { margin-top: 15px; }
-    .conflict-item {
-      border: 1px solid #e5e7eb; border-radius: 4px; padding: 12px; margin-bottom: 10px; background-color: #f9fafb;
-    }
+    .conflict-item { border: 1px solid #e5e7eb; border-radius: 4px; padding: 12px; margin-bottom: 10px; background-color: #f9fafb; }
     .conflict-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .conflict-title { font-weight: 500; }
     .similarity-score { font-size: 12px; color: #666; }
     .conflict-details { font-size: 13px; color: #555; line-height: 1.4; }
-
     .layout { display: grid; grid-template-columns: 400px 1fr; gap: 20px; }
     @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } }
-
     .hidden { display: none; }
-
-    .spinner {
-      display: inline-block; width: 16px; height: 16px; border: 2px solid #f3f3f3;
-      border-top: 2px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px;
-    }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #f3f3f3; border-top: 2px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    code {
-      background-color: #f3f4f6; padding: 2px 4px; border-radius: 3px;
-      font-family: 'Monaco', 'Consolas', monospace; font-size: 12px;
-    }
+    .muted { color: #9ca3af; }
+    .link-cell { max-width: 260px; overflow-wrap: anywhere; }
   </style>
 </head>
 <body>
@@ -115,7 +67,6 @@
     <div class="layout">
       <!-- Left column -->
       <div>
-        <!-- Check Section -->
         <div class="card">
           <h2>Check Availability</h2>
 
@@ -143,7 +94,7 @@
             </div>
             <div class="form-group">
               <label>Dataset URL</label>
-              <input id="datasetlink" type="url" placeholder="https://..." />
+              <input id="datasetLink" type="url" placeholder="https://..." />
             </div>
           </div>
 
@@ -187,7 +138,6 @@
           </div>
         </div>
 
-        <!-- Add Section -->
         <div class="card">
           <h2>Add Booking</h2>
           <p style="margin-bottom: 15px; color: #666;">Submit your topic if it's available.</p>
@@ -242,7 +192,7 @@
       studentId: document.getElementById('studentId'),
       topicTitle: document.getElementById('topicTitle'),
       dataset: document.getElementById('dataset'),
-      datasetlink: document.getElementById('datasetLink'),
+      datasetLink: document.getElementById('datasetLink'),
       goal: document.getElementById('goal'),
       teacher: document.getElementById('teacher'),
     };
@@ -297,7 +247,7 @@
 
     // ===== Data loading =====
     async function loadRows() {
-      rowsTbody.innerHTML = '<tr><td colspan="7" class="loading">Loading...</td></tr>';
+      rowsTbody.innerHTML = '<tr><td colspan="8" class="loading">Loading...</td></tr>';
 
       try {
         const url = `${SCRIPT_URL}?action=list&token=${encodeURIComponent(API_TOKEN)}`;
@@ -308,6 +258,7 @@
         const data = await res.json();
         if (data.error) throw new Error(data.error);
 
+        // Expect exactly these keys from the Apps Script: Dataset, DatasetLink, Goal.
         allRows = (data.rows || []).map((r, idx) => ({
           idx,
           Timestamp: r.Timestamp ? new Date(r.Timestamp) : '',
@@ -323,7 +274,7 @@
 
         renderRows();
       } catch (err) {
-        rowsTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">Error: ${escapeHtml(err.message)}</td></tr>`;
+        rowsTbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #ef4444; padding: 20px;">Error: ${escapeHtml(err.message)}</td></tr>`;
       }
     }
 
@@ -340,7 +291,7 @@
       });
 
       if (filtered.length === 0) {
-        rowsTbody.innerHTML = '<tr><td colspan="7" class="empty-state">No bookings found</td></tr>';
+        rowsTbody.innerHTML = '<tr><td colspan="8" class="empty-state">No bookings found</td></tr>';
         return;
       }
 
@@ -358,10 +309,15 @@
                   ? `<a href="${escapeHtml(r.DatasetLink)}" target="_blank" style="color: #2563eb; text-decoration: none;">${escapeHtml(r.Dataset)}</a>`
                   : `<span style="font-weight: 500; color: #2563eb;">${escapeHtml(r.Dataset)}</span>`
                 )
-              : '<span style="color: #9ca3af;">No dataset</span>'
+              : '<span class="muted">No dataset</span>'
             }
           </td>
-          <td style="max-width: 260px; overflow-wrap: anywhere;">${escapeHtml(r.Goal)}</td>
+          <td class="link-cell">
+            ${r.DatasetLink
+              ? `<a href="${escapeHtml(r.DatasetLink)}" target="_blank" style="color: #2563eb; text-decoration: none;">${escapeHtml(r.DatasetLink)}</a>`
+              : '<span class="muted">No link</span>'}
+          </td>
+          <td class="link-cell">${escapeHtml(r.Goal)}</td>
           <td>${escapeHtml(r.Teacher)}</td>
           <td>${getStatusBadge(r.Status)}</td>
         </tr>
@@ -385,18 +341,13 @@
 
     // ===== AI similarity =====
     async function ensureEmbedderLoaded() {
-      // Wait until the script is present (prevents "pipeline undefined" race)
       let tries = 0;
       while (!window.transformers && tries < 20) {
         await new Promise(r => setTimeout(r, 150));
         tries++;
       }
-      if (!window.transformers) {
-        throw new Error('AI engine not loaded yet. Check network/CDN or try again.');
-      }
-      if (!embedder) {
-        embedder = await window.transformers.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-      }
+      if (!window.transformers) throw new Error('AI engine not loaded yet. Check network/CDN or try again.');
+      if (!embedder) embedder = await window.transformers.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
     }
 
     async function embedText(text) {
@@ -516,7 +467,7 @@
           StudentID: input.studentId.value.trim(),
           TopicTitle: input.topicTitle.value.trim(),
           Dataset: input.dataset.value.trim(),
-          Datasetlink: input.datasetlink.value.trim(), // single source of truth
+          DatasetLink: input.datasetLink.value.trim(),
           Goal: input.goal.value.trim(),
           Teacher: input.teacher.value,
           Status: 'Booked',
@@ -528,26 +479,19 @@
 
         const formData = new FormData();
         formData.append('token', API_TOKEN);
+        formData.append('action', 'add'); // many Apps Scripts expect this
         formData.append('data', JSON.stringify(payload));
 
         const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
-        const data = await res.json();
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
 
+        const data = await res.json();
         if (data.error) throw new Error(data.error);
 
         if (data && data.ok) {
           addStatus.innerHTML = '<div class="status status-success">✅ Added successfully</div>';
-
-          // Clear form
-          Object.values(input).forEach(el => {
-            if (el.tagName === 'SELECT') el.selectedIndex = 0;
-            else el.value = '';
-          });
-
-          // Refresh table
+          Object.values(input).forEach(el => { if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = ''; });
           await loadRows();
-
-          // Hide check results
           checkResult.classList.add('hidden');
         } else {
           throw new Error('Unexpected response format');
