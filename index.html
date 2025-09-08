@@ -855,20 +855,12 @@
             `;
           }).join('');
 
-          const conflictAnalysisSection = conflicts.length > 0 ? `
-            <h4 style="margin-bottom: 15px;">Detailed Conflict Analysis:</h4>
-            ${conflictDetails}
-            ${conflicts.length > 10 ? `<p style="text-align: center; color: #666; margin-top: 10px;">Showing top 10 of ${conflicts.length} potential conflicts</p>` : ''}
-          ` : `
-            <p style="text-align: center; color: #059669; font-weight: 500; margin-top: 15px;">
-              🎉 No conflicts detected! Your topic appears to be unique.
-            </p>
-          `;
-
           conflictsBox.innerHTML = `
             <div class="conflicts">
               ${summary}
-              ${conflictAnalysisSection}
+              <h4 style="margin-bottom: 15px;">Detailed Conflict Analysis:</h4>
+              ${conflictDetails}
+              ${conflicts.length > 10 ? `<p style="text-align: center; color: #666; margin-top: 10px;">Showing top 10 of ${conflicts.length} potential conflicts</p>` : ''}
             </div>
           `;
         }
