@@ -570,12 +570,31 @@
 
     // Check for duplicate student ID
     function checkDuplicateStudentId(studentId) {
-      if (!studentId || !studentId.trim()) return null;
+      // ============ DEBUGGING CHECKPOINT: DUPLICATE CHECK ============
+      console.log('🔍 checkDuplicateStudentId called with:', studentId);
+      console.log('📊 Total rows to check:', allRows.length);
+      
+      if (!studentId || !studentId.trim()) {
+        console.log('⚠️ No student ID provided, skipping duplicate check');
+        return null;
+      }
       
       const trimmedId = studentId.trim();
-      return allRows.find(row => 
-        row.StudentID && row.StudentID.trim() === trimmedId
-      );
+      console.log('🔍 Searching for student ID:', trimmedId);
+      
+      const duplicate = allRows.find(row => {
+        const rowId = row.StudentID && row.StudentID.trim();
+        console.log('  Comparing with row:', rowId);
+        return rowId === trimmedId;
+      });
+      
+      if (duplicate) {
+        console.log('🚨 DUPLICATE FOUND:', duplicate);
+      } else {
+        console.log('✅ No duplicate found');
+      }
+      
+      return duplicate;
     }
 
     // Enhanced similarity calculation
