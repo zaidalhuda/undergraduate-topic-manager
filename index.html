@@ -908,7 +908,7 @@
       if (studentIdValue) {
         const existingStudent = allRows.find(row => row.StudentID === studentIdValue);
         if (existingStudent) {
-          addStatus.innerHTML = `<div class="status status-error">❌ Student ID ${studentIdValue} already has a booking: "${existingStudent.TopicTitle}"</div>`;
+          addStatus.innerHTML = `<div class="status status-error">❌ Student ID ${studentIdValue} already exists for ${existingStudent.StudentName}</div>`;
           return;
         }
       }
