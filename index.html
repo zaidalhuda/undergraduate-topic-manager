@@ -5,291 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Undergrad Topic Booking</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f5f5f5;
-      color: #333;
-      line-height: 1.6;
-      padding: 20px;
+      background-color: #f5f5f5; color: #333; line-height: 1.6; padding: 20px;
     }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    .header {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    .header h1 {
-      font-size: 24px;
-      color: #2563eb;
-      margin-bottom: 5px;
-    }
-    
-    .header p {
-      color: #666;
-      margin-bottom: 15px;
-    }
-    
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    .card h2 {
-      font-size: 18px;
-      margin-bottom: 15px;
-      color: #333;
-    }
-    
-    .form-group {
-      margin-bottom: 15px;
-    }
-    
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-    
-    @media (max-width: 768px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 500;
-      color: #333;
-    }
-    
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,.1); }
+    .header h1 { font-size: 24px; color: #2563eb; margin-bottom: 6px; }
+    .header p { color: #666; margin-bottom: 12px; }
+    .card { background:#fff; padding:20px; border-radius:8px; margin-bottom:20px; box-shadow:0 2px 4px rgba(0,0,0,.08); }
+    .card h2 { font-size: 18px; margin-bottom: 12px; }
+    .form-group { margin-bottom: 12px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    @media (max-width: 768px){ .form-row{ grid-template-columns:1fr; } }
+    label { display:block; margin-bottom:6px; font-weight:500; }
     input, textarea, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
+      width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:14px;
     }
-    
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: #2563eb;
-    }
-    
-    input.error {
-      border-color: #ef4444;
-    }
-    
-    .error-message {
-      color: #ef4444;
-      font-size: 12px;
-      margin-top: 5px;
-    }
-    
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-    
-    .btn {
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-    }
-    
-    .btn:hover {
-      background-color: #1d4ed8;
-    }
-    
-    .btn:disabled {
-      background-color: #94a3b8;
-      cursor: not-allowed;
-    }
-    
-    .btn-secondary {
-      background-color: #6b7280;
-    }
-    
-    .btn-secondary:hover {
-      background-color: #4b5563;
-    }
-    
-    .btn-full {
-      width: 100%;
-    }
-    
-    .status {
-      padding: 8px 12px;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: 500;
-      display: inline-block;
-    }
-    
-    .status-success {
-      background-color: #dcfce7;
-      color: #166534;
-    }
-    
-    .status-error {
-      background-color: #fee2e2;
-      color: #991b1b;
-    }
-    
-    .status-warning {
-      background-color: #fef3c7;
-      color: #92400e;
-    }
-    
-    .filters {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-    }
-    
-    .filters input {
-      flex: 1;
-      min-width: 150px;
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    
-    table th {
-      background-color: #f8f9fa;
-      padding: 12px;
-      text-align: left;
-      font-weight: 600;
-      border-bottom: 2px solid #e5e7eb;
-    }
-    
-    table td {
-      padding: 12px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    
-    table tr:hover {
-      background-color: #f8f9fa;
-    }
-    
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #666;
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: #666;
-    }
-    
-    .conflicts {
-      margin-top: 15px;
-    }
-    
-    .conflict-item {
-      border: 1px solid #e5e7eb;
-      border-radius: 4px;
-      padding: 12px;
-      margin-bottom: 10px;
-      background-color: #f9fafb;
-    }
-    
-    .conflict-header {
-      display: flex;
-      justify-content: between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    
-    .conflict-title {
-      font-weight: 500;
-    }
-    
-    .similarity-score {
-      font-size: 12px;
-      color: #666;
-    }
-    
-    .conflict-details {
-      font-size: 13px;
-      color: #555;
-      line-height: 1.4;
-    }
-    
-    .layout {
-      display: grid;
-      grid-template-columns: 400px 1fr;
-      gap: 20px;
-    }
-    
-    @media (max-width: 1024px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    .hidden {
-      display: none;
-    }
-    
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #f3f3f3;
-      border-top: 2px solid #2563eb;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-right: 8px;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    code {
-      background-color: #f3f4f6;
-      padding: 2px 4px;
-      border-radius: 3px;
-      font-family: 'Monaco', 'Consolas', monospace;
-      font-size: 12px;
-    }
+    input:focus, textarea:focus, select:focus { outline:none; border-color:#2563eb; }
+    input.error { border-color:#ef4444; }
+    .error-message { color:#ef4444; font-size:12px; margin-top:4px; }
+    textarea { resize: vertical; min-height: 84px; }
+    .btn { background:#2563eb; color:#fff; border:none; padding:12px 16px; border-radius:6px; cursor:pointer; font-size:14px; font-weight:600; }
+    .btn:hover { background:#1d4ed8; }
+    .btn-secondary { background:#6b7280; }
+    .btn-secondary:hover { background:#4b5563; }
+    .btn:disabled { background:#94a3b8; cursor:not-allowed; }
+    .btn-full { width:100%; }
+    .status { padding:8px 10px; border-radius:6px; font-size:13px; display:inline-flex; align-items:center; gap:6px; font-weight:600; }
+    .status-success { background:#dcfce7; color:#166534; }
+    .status-error { background:#fee2e2; color:#991b1b; }
+    .status-warning { background:#fef3c7; color:#92400e; }
+    .status-info { background:#e0f2fe; color:#075985; }
+    .layout { display:grid; grid-template-columns:400px 1fr; gap:20px; }
+    @media (max-width: 1024px){ .layout{ grid-template-columns:1fr; } }
+    .hidden { display:none; }
+    table { width:100%; border-collapse: collapse; margin-top: 10px; }
+    th { background:#f8f9fa; text-align:left; padding:10px; border-bottom:2px solid #e5e7eb; }
+    td { padding:10px; border-bottom:1px solid #e5e7eb; vertical-align: top; }
+    tr:hover { background:#fafafa; }
+    .filters { display:flex; gap:10px; margin-bottom:10px; flex-wrap: wrap; }
+    .loading { text-align:center; padding:20px; color:#666; }
+    .empty-state { text-align:center; padding:40px 20px; color:#666; }
+    .spinner { display:inline-block; width:16px; height:16px; border:2px solid #f3f3f3; border-top:2px solid #2563eb; border-radius:50%; animation:spin 1s linear infinite; }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+    .conflicts { margin-top: 12px; display: grid; gap:10px; }
+    .conflict-item { border:1px solid #e5e7eb; border-radius:8px; padding:12px; background:#f9fafb; }
+    .conflict-top { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+    .badge { font-size:11px; padding:4px 8px; border-radius:999px; font-weight:700; }
+    .b-exact { background:#fee2e2; color:#991b1b; }
+    .b-high { background:#ffedd5; color:#9a3412; }
+    .b-med { background:#e0f2fe; color:#075985; }
+    .b-low { background:#e9d5ff; color:#6b21a8; }
+    .scorebar { height:6px; background:#e5e7eb; border-radius:999px; overflow:hidden; }
+    .scorebar > span { display:block; height:100%; background:#2563eb; width:0%; }
+    .small { font-size:12px; color:#555; }
+    code { background:#f3f4f6; padding:2px 4px; border-radius:4px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>Undergrad Topic Booking</h1>
-      <p>Manage student research topics with conflict detection</p>
+      <p>Manage student research topics with clear conflict checks on <strong>Title</strong>, <strong>Dataset</strong>, and <strong>Goal</strong>.</p>
       <button id="refreshBtn" class="btn btn-secondary">↻ Refresh Data</button>
     </div>
 
@@ -299,7 +78,7 @@
         <!-- Check Section -->
         <div class="card">
           <h2>Check Availability</h2>
-          
+
           <div class="form-row">
             <div class="form-group">
               <label>Student Name</label>
@@ -357,17 +136,17 @@
 
           <button id="checkBtn" class="btn btn-full">Check Availability</button>
 
-          <div id="checkResult" class="hidden">
-            <div id="availabilityNote" style="margin-top: 15px;"></div>
-            <div id="conflicts"></div>
+          <div id="checkResult" class="hidden" style="margin-top:12px;">
+            <div id="availabilitySummary" style="margin-bottom:8px;"></div>
+            <div id="availabilityNote" style="margin-bottom:6px;"></div>
+            <div id="conflicts" class="conflicts"></div>
           </div>
         </div>
 
         <!-- Add Section -->
         <div class="card">
           <h2>Add Booking</h2>
-          <p style="margin-bottom: 15px; color: #666;">Submit your topic if it's available.</p>
-          
+          <p class="small" style="margin-bottom: 10px;">Submit your topic if it's available.</p>
           <button id="addBtn" class="btn btn-full">Add to Sheet</button>
           <div id="addStatus" style="margin-top: 10px; text-align: center;"></div>
         </div>
@@ -376,14 +155,12 @@
       <!-- Right column -->
       <div class="card">
         <h2>Current Bookings</h2>
-        
         <div class="filters">
           <input id="filterText" placeholder="Search..." />
           <input id="filterTeacher" placeholder="Filter by Teacher" />
           <button id="clearFilters" class="btn btn-secondary">Clear</button>
         </div>
-
-        <div style="overflow-x: auto;">
+        <div style="overflow-x:auto;">
           <table>
             <thead>
               <tr>
@@ -404,7 +181,7 @@
   </div>
 
   <script>
-    // Configuration
+    // ====== CONFIG ======
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxv7iau-cZ0iF29D3EaFehf0q5xoBJ2iOV0O7Pz2R_-bxRZDnt3S9DY1-jGDtiK0iKaLg/exec';
     const API_TOKEN = 'my-secret-123';
 
@@ -413,15 +190,15 @@
       STUDENT_NAME: 'StudentName',
       STUDENT_ID: 'StudentID',
       TOPIC_TITLE: 'TopicTitle',
-      DATASET_NAME: 'Dataset Name',    // Note: this one has spaces
-      DATASET_LINK: 'Dataset Link',    // Note: this one has spaces
+      DATASET_NAME: 'Dataset Name',    // note spaces
+      DATASET_LINK: 'Dataset Link',    // note spaces
       GOAL: 'Goal',
       TEACHER: 'Teacher',
       STATUS: 'Status',
       TIMESTAMP: 'Timestamp'
     };
 
-    // Elements
+    // ====== ELEMENTS ======
     const input = {
       studentName: document.getElementById('studentName'),
       studentId: document.getElementById('studentId'),
@@ -435,6 +212,7 @@
     const checkBtn = document.getElementById('checkBtn');
     const checkResult = document.getElementById('checkResult');
     const availabilityNote = document.getElementById('availabilityNote');
+    const availabilitySummary = document.getElementById('availabilitySummary');
     const conflictsBox = document.getElementById('conflicts');
     const addBtn = document.getElementById('addBtn');
     const addStatus = document.getElementById('addStatus');
@@ -446,199 +224,334 @@
 
     let allRows = [];
 
-    // Student ID validation
-    function validateStudentId(value) {
-      const pattern = /^2021\d{8}$/;
-      return pattern.test(value);
+    // ====== HELPERS (text processing, similarity) ======
+    const STOPWORDS = new Set([
+      // English
+      'the','a','an','of','and','or','to','for','with','on','in','by','from','at','as','is','are','be','this','that','these','those','using','use','based',
+      'data','dataset','study','analysis','method','methods','approach','model','models','towards','into','via','over','under','within','about',
+      // Arabic (small set)
+      'في','على','عن','من','إلى','الى','مع','هذا','هذه','ذلك','تلك','و','أو','او','أن','إن','كان','كانت','هو','هي','ضمن','حول'
+    ]);
+
+    function normalize(str='') {
+      return (str || '')
+        .toLowerCase()
+        .replace(/https?:\/\/(www\.)?/g,'') // drop scheme for URL compare
+        .replace(/[^\p{L}\p{N}\s./_-]+/gu,'') // keep letters/numbers/space and some URL chars
+        .replace(/\s+/g,' ')
+        .trim();
     }
 
-    // Event listeners
-    document.getElementById('refreshBtn').addEventListener('click', loadRows);
-    clearFilters.addEventListener('click', () => {
-      filterText.value = '';
-      filterTeacher.value = '';
-      renderRows();
+    function tokens(str='') {
+      const n = normalize(str);
+      return n.split(/\s+/).filter(t => t && !STOPWORDS.has(t));
+    }
+
+    function jaccard(a, b) {
+      const A = new Set(tokens(a)), B = new Set(tokens(b));
+      if (A.size === 0 && B.size === 0) return 1;
+      let inter = 0;
+      for (const x of A) if (B.has(x)) inter++;
+      const uni = A.size + B.size - inter;
+      return uni ? inter / uni : 0;
+    }
+
+    function levenshtein(a, b) {
+      a = normalize(a); b = normalize(b);
+      const m = a.length, n = b.length;
+      if (m === 0) return n;
+      if (n === 0) return m;
+      const dp = Array.from({length:m+1},()=>Array(n+1).fill(0));
+      for (let i=0;i<=m;i++) dp[i][0]=i;
+      for (let j=0;j<=n;j++) dp[0][j]=j;
+      for (let i=1;i<=m;i++){
+        for (let j=1;j<=n;j++){
+          const cost = a[i-1]===b[j-1]?0:1;
+          dp[i][j]=Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost);
+        }
+      }
+      return dp[m][n];
+    }
+
+    function ratioFromDistance(a, b) {
+      const dist = levenshtein(a,b);
+      const maxLen = Math.max(normalize(a).length, normalize(b).length) || 1;
+      return 1 - (dist / maxLen);
+    }
+
+    function sameUrl(u1='', u2='') {
+      const A = normalize(u1).replace(/\/+$/,''); // trim trailing slash
+      const B = normalize(u2).replace(/\/+$/,'');
+      return A && B && A === B;
+    }
+
+    function sameDomain(u1='', u2='') {
+      try {
+        const d1 = new URL(u1).hostname.replace(/^www\./,'');
+        const d2 = new URL(u2).hostname.replace(/^www\./,'');
+        return d1 && d2 && d1 === d2;
+      } catch { return false; }
+    }
+
+    function pct(x) { return Math.round(x*100); }
+
+    function severityBadge(level){
+      if (level==='exact') return '<span class="badge b-exact">EXACT</span>';
+      if (level==='high') return '<span class="badge b-high">HIGH</span>';
+      if (level==='medium') return '<span class="badge b-med">MED</span>';
+      return '<span class="badge b-low">LOW</span>';
+    }
+
+    function scorebar(s) {
+      const w = Math.round(Math.max(0, Math.min(100, s)));
+      return `<div class="scorebar"><span style="width:${w}%"></span></div>`;
+    }
+
+    // ====== VALIDATION ======
+    function validateStudentId(value) {
+      const pattern = /^2021\\d{8}$/;
+      return pattern.test(value);
+    }
+    input.studentId.addEventListener('input', function(){
+      const value = this.value.trim();
+      if (value && !validateStudentId(value)) { this.classList.add('error'); studentIdError.classList.remove('hidden'); }
+      else { this.classList.remove('error'); studentIdError.classList.add('hidden'); }
     });
+
+    // ====== DATA FETCH & RENDER ======
+    document.getElementById('refreshBtn').addEventListener('click', loadRows);
+    clearFilters.addEventListener('click', () => { filterText.value=''; filterTeacher.value=''; renderRows(); });
     filterText.addEventListener('input', renderRows);
     filterTeacher.addEventListener('input', renderRows);
+
     checkBtn.addEventListener('click', checkAvailability);
     addBtn.addEventListener('click', addBooking);
 
-    // Student ID validation on input
-    input.studentId.addEventListener('input', function() {
-      const value = this.value.trim();
-      if (value && !validateStudentId(value)) {
-        this.classList.add('error');
-        studentIdError.classList.remove('hidden');
-      } else {
-        this.classList.remove('error');
-        studentIdError.classList.add('hidden');
-      }
-    });
-
-    // Load data
     async function loadRows() {
       rowsTbody.innerHTML = '<tr><td colspan="7" class="loading">Loading...</td></tr>';
-      
       try {
         const url = `${SCRIPT_URL}?action=list&token=${encodeURIComponent(API_TOKEN)}`;
         const res = await fetch(url);
-        
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-        }
-        
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
         const data = await res.json();
-        
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        
+        if (data.error) throw new Error(data.error);
+
         allRows = (data.rows || []).map((r, idx) => ({
           idx,
           Timestamp: r[SHEET_COLUMNS.TIMESTAMP] ? new Date(r[SHEET_COLUMNS.TIMESTAMP]) : '',
           StudentName: r[SHEET_COLUMNS.STUDENT_NAME] || '',
           StudentID: r[SHEET_COLUMNS.STUDENT_ID] || '',
           TopicTitle: r[SHEET_COLUMNS.TOPIC_TITLE] || '',
-          Dataset: (r[SHEET_COLUMNS.DATASET_NAME]  || ''),
-          DatasetLink: (r[SHEET_COLUMNS.DATASET_LINK] || ''),
+          Dataset: r[SHEET_COLUMNS.DATASET_NAME] || '',
+          DatasetLink: r[SHEET_COLUMNS.DATASET_LINK] || '',
           Goal: r[SHEET_COLUMNS.GOAL] || '',
           Teacher: r[SHEET_COLUMNS.TEACHER] || '',
           Status: r[SHEET_COLUMNS.STATUS] || 'Booked'
         }));
-        
+
         renderRows();
       } catch (err) {
-        rowsTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">Error: ${err.message}</td></tr>`;
+        rowsTbody.innerHTML = `<tr><td colspan="7" class="loading" style="color:#b91c1c;">Error: ${err.message}</td></tr>`;
       }
     }
 
-    // Render table rows
     function renderRows() {
-      const searchText = filterText.value.toLowerCase();
-      const teacherFilter = filterTeacher.value.toLowerCase();
-      
+      const searchText = (filterText.value || '').toLowerCase();
+      const teacherFilter = (filterTeacher.value || '').toLowerCase();
       const filtered = allRows.filter(r => {
-        const searchTarget = `${r.StudentName} ${r.TopicTitle} ${r.Dataset} ${r.Goal} ${r.Teacher}`.toLowerCase();
-        const matchesSearch = !searchText || searchTarget.includes(searchText);
-        const matchesTeacher = !teacherFilter || r.Teacher.toLowerCase().includes(teacherFilter);
-        return matchesSearch && matchesTeacher;
+        const blob = `${r.StudentName} ${r.TopicTitle} ${r.Dataset} ${r.Goal} ${r.Teacher}`.toLowerCase();
+        const ok1 = !searchText || blob.includes(searchText);
+        const ok2 = !teacherFilter || r.Teacher.toLowerCase().includes(teacherFilter);
+        return ok1 && ok2;
       });
 
-      if (filtered.length === 0) {
+      if (!filtered.length) {
         rowsTbody.innerHTML = '<tr><td colspan="7" class="empty-state">No bookings found</td></tr>';
         return;
       }
 
-      rowsTbody.innerHTML = filtered.map((r, i) => `
+      rowsTbody.innerHTML = filtered.map((r,i)=>`
         <tr>
-          <td>${i + 1}</td>
+          <td>${i+1}</td>
           <td>
-            <div style="font-weight: 500;">${escapeHtml(r.StudentName)}</div>
-            <div style="font-size: 12px; color: #666;">ID: ${escapeHtml(r.StudentID)}</div>
+            <div style="font-weight:600">${escapeHtml(r.StudentName)}</div>
+            <div class="small">ID: ${escapeHtml(r.StudentID)}</div>
           </td>
           <td>${escapeHtml(r.TopicTitle)}</td>
           <td>
-            <div style="font-weight: 500; color: #2563eb; margin-bottom: 4px;">${escapeHtml(r.Dataset || 'No dataset specified')}</div>
-            ${r.DatasetLink ? `
-              <a href="${escapeHtml(r.DatasetLink)}" target="_blank" style="color: #059669; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 2px;">
-                🔗 View Dataset
-              </a>
-            ` : '<span style="color: #9ca3af; font-size: 12px;">No link provided</span>'}
+            <div style="font-weight:600; color:#2563eb; margin-bottom:4px;">${escapeHtml(r.Dataset || 'No dataset')}</div>
+            ${r.DatasetLink ? `<a href="${escapeHtml(r.DatasetLink)}" target="_blank" class="small">🔗 View Dataset</a>`
+                            : `<span class="small" style="color:#9ca3af;">No link</span>`}
           </td>
-          <td style="max-width: 200px; word-wrap: break-word;">${escapeHtml(r.Goal)}</td>
+          <td style="max-width:260px; word-wrap:break-word;">${escapeHtml(r.Goal)}</td>
           <td>${escapeHtml(r.Teacher)}</td>
           <td>${getStatusBadge(r.Status)}</td>
         </tr>
       `).join('');
     }
 
-    // Status badge
     function getStatusBadge(status) {
       const s = (status || 'Booked').toLowerCase();
       if (s.includes('book')) return '<span class="status status-success">Booked</span>';
       if (s.includes('pending')) return '<span class="status status-warning">Pending</span>';
-      return `<span class="status status-warning">${escapeHtml(status || 'Unknown')}</span>`;
+      return `<span class="status status-info">${escapeHtml(status || 'Unknown')}</span>`;
     }
 
-    // Escape HTML
-    function escapeHtml(str) {
+    function escapeHtml(str='') {
       const div = document.createElement('div');
       div.textContent = str;
       return div.innerHTML;
     }
 
-    // Check conflicts (simple, exact-match based)
-    function isExactConflict(newRow, existingRow) {
-      const sameTopic = newRow.TopicTitle.toLowerCase() === existingRow.TopicTitle.toLowerCase();
-      if (sameTopic) return true;
+    // ====== CONFLICT LOGIC (Title, Dataset, Goal) ======
+    function classifySimilarity(candidate, row) {
+      // Title
+      const titleEq = normalize(candidate.TopicTitle) === normalize(row.TopicTitle);
+      const titleJac = jaccard(candidate.TopicTitle, row.TopicTitle);
+      const titleLev = ratioFromDistance(candidate.TopicTitle, row.TopicTitle);
+      let titleLevel = null, titleScore = Math.max(titleJac, titleLev);
+      if (titleEq || titleLev >= 0.95) titleLevel = 'exact';
+      else if (titleScore >= 0.80) titleLevel = 'high';
+      else if (titleScore >= 0.60) titleLevel = 'medium';
+      else if (titleScore >= 0.40) titleLevel = 'low';
 
-      const sameDataset = newRow.Dataset.toLowerCase() === existingRow.Dataset.toLowerCase() ||
-                         newRow.DatasetLink === existingRow.DatasetLink;
-      return sameDataset;
+      // Dataset
+      const sameLink = sameUrl(candidate.DatasetLink, row.DatasetLink);
+      const sameName = normalize(candidate.Dataset) === normalize(row.Dataset);
+      const dsJac = jaccard(candidate.Dataset, row.Dataset);
+      let datasetLevel = null, datasetScore = Math.max(dsJac, sameLink ? 1 : 0, sameName ? 1 : 0);
+      if (sameLink || sameName) datasetLevel = 'exact';
+      else if (sameDomain(candidate.DatasetLink, row.DatasetLink) && dsJac >= 0.5) { datasetLevel = 'high'; datasetScore = Math.max(datasetScore, 0.8); }
+      else if (dsJac >= 0.5) datasetLevel = 'medium';
+      else if (dsJac >= 0.3) datasetLevel = 'low';
+
+      // Goal
+      const goalJac = jaccard(candidate.Goal, row.Goal);
+      let goalLevel = null, goalScore = goalJac;
+      if (goalJac >= 0.75) goalLevel = 'high';
+      else if (goalJac >= 0.55) goalLevel = 'medium';
+      else if (goalJac >= 0.35) goalLevel = 'low';
+
+      // Overall severity: exact/high on title or dataset => conflict
+      let overall = null, key = 0;
+      if (titleLevel === 'exact' || datasetLevel === 'exact') { overall = 'exact'; key = 4; }
+      else if (titleLevel === 'high' || datasetLevel === 'high') { overall = 'high'; key = 3; }
+      else if (goalLevel === 'high' || titleLevel === 'medium' || datasetLevel === 'medium') { overall = 'medium'; key = 2; }
+      else if (goalLevel === 'medium' || titleLevel === 'low' || datasetLevel === 'low') { overall = 'low'; key = 1; }
+
+      const score = Math.max(
+        (titleLevel ? titleScore : 0),
+        (datasetLevel ? datasetScore : 0),
+        (goalLevel ? goalScore : 0)
+      );
+
+      return {
+        title: { level: titleLevel, score: titleScore },
+        dataset: { level: datasetLevel, score: datasetScore, sameLink, sameName },
+        goal: { level: goalLevel, score: goalScore },
+        overall, score, sortKey: key
+      };
     }
 
-    // Check availability
+    function buildConflictCard(row, sim) {
+      function line(label, part) {
+        if (!part.level) return '';
+        const s = part.score || 0;
+        const pctStr = pct(s) + '%';
+        return `
+          <div class="small" style="display:grid; grid-template-columns:110px 1fr; gap:8px; align-items:center; margin:6px 0;">
+            <div><strong>${label}</strong> ${severityBadge(part.level)} <span style="opacity:.8">(${pctStr})</span></div>
+            ${scorebar(pct(s))}
+          </div>
+        `;
+      }
+
+      const dsExtras = [];
+      if (sim.dataset.sameLink) dsExtras.push('<code>Same URL</code>');
+      if (sim.dataset.sameName) dsExtras.push('<code>Same name</code>');
+
+      return `
+        <div class="conflict-item">
+          <div class="conflict-top">
+            <div style="font-weight:700">${escapeHtml(row.TopicTitle || '(no title)')}</div>
+            <div>${severityBadge(sim.overall || 'low')}</div>
+          </div>
+          <div class="small" style="margin-bottom:6px;">
+            <span style="opacity:.8">Teacher:</span> ${escapeHtml(row.Teacher || '-')} &nbsp; • &nbsp;
+            <span style="opacity:.8">Dataset:</span> ${escapeHtml(row.Dataset || '-')} ${row.DatasetLink ? `&nbsp; <a class="small" href="${escapeHtml(row.DatasetLink)}" target="_blank">🔗</a>`:''}
+          </div>
+          ${line('Title', sim.title)}
+          ${line('Dataset', sim.dataset)} ${dsExtras.length ? `<div class="small" style="margin:6px 0 0 0;">${dsExtras.join(' ')}</div>`:''}
+          ${line('Goal', sim.goal)}
+        </div>
+      `;
+    }
+
     async function checkAvailability() {
-      checkBtn.innerHTML = '<span class="spinner"></span>Checking...';
+      checkBtn.innerHTML = '<span class="spinner"></span> Checking...';
       checkBtn.disabled = true;
-      
-      availabilityNote.innerHTML = '';
       conflictsBox.innerHTML = '';
+      availabilityNote.innerHTML = '';
+      availabilitySummary.innerHTML = '';
       checkResult.classList.remove('hidden');
 
       try {
         const candidate = {
-          TopicTitle: input.topicTitle.value.trim(),
-          Dataset: input.dataset.value.trim(),
-          DatasetLink: input.datasetLink.value.trim(),
-          Goal: input.goal.value.trim()
+          TopicTitle: (input.topicTitle.value || '').trim(),
+          Dataset: (input.dataset.value || '').trim(),
+          DatasetLink: (input.datasetLink.value || '').trim(),
+          Goal: (input.goal.value || '').trim()
         };
 
         if (!candidate.TopicTitle && !candidate.Dataset && !candidate.Goal) {
-          availabilityNote.innerHTML = '<div class="status status-warning">Please enter topic, dataset, or goal</div>';
+          availabilityNote.innerHTML = '<div class="status status-warning">Please enter at least a Title, Dataset, or Goal to check.</div>';
           return;
         }
 
-        let matches = [];
-        for (const r of allRows) {
-          const isConflict = isExactConflict(candidate, r);
-          matches.push({ r, score: isConflict ? 1 : 0, isConflict });
-        }
+        // Compute similarities against all rows
+        const sims = allRows.map(r => {
+          const s = classifySimilarity(candidate, r);
+          return { r, s };
+        });
 
-        matches.sort((a, b) => b.score - a.score);
-        const highConflicts = matches.filter(x => x.isConflict);
-        const mediumConflicts = []; // no AI similarity, so we skip fuzzy matches
+        // Split into buckets
+        const exacts = sims.filter(x => x.s.overall === 'exact').sort((a,b)=>b.s.score - a.s.score);
+        const highs  = sims.filter(x => x.s.overall === 'high').sort((a,b)=>b.s.score - a.s.score);
+        const meds   = sims.filter(x => x.s.overall === 'medium').sort((a,b)=>b.s.score - a.s.score);
+        const lows   = sims.filter(x => x.s.overall === 'low').sort((a,b)=>b.s.score - a.s.score);
 
-        if (highConflicts.length > 0) {
-          availabilityNote.innerHTML = '<div class="status status-error">❌ Conflict - topic appears to be taken</div>';
-        } else if (mediumConflicts.length > 0) {
-          availabilityNote.innerHTML = '<div class="status status-warning">⚠️ Potential overlap detected</div>';
+        // Summary line
+        const totalHits = exacts.length + highs.length + meds.length;
+        if (exacts.length) {
+          availabilityNote.innerHTML = '<div class="status status-error">❌ Conflict: Exact/near-exact match found on Title or Dataset.</div>';
+        } else if (highs.length) {
+          availabilityNote.innerHTML = '<div class="status status-warning">⚠️ High overlap: similar Title/Dataset detected.</div>';
+        } else if (meds.length) {
+          availabilityNote.innerHTML = '<div class="status status-warning">⚠️ Possible overlap in Goal or moderately similar Title.</div>';
         } else {
-          availabilityNote.innerHTML = '<div class="status status-success">✅ Available - no conflicts found</div>';
+          availabilityNote.innerHTML = '<div class="status status-success">✅ Available – no meaningful overlaps found.</div>';
         }
+        availabilitySummary.innerHTML =
+          `<div class="small">Matches → <strong>${exacts.length}</strong> exact, <strong>${highs.length}</strong> high, <strong>${meds.length}</strong> medium.</div>`;
 
-        const topMatches = matches.filter(x => x.isConflict);
-        if (topMatches.length > 0) {
-          conflictsBox.innerHTML = `
-            <div class="conflicts">
-              <h4 style="margin-bottom: 10px;">Exact Conflicts:</h4>
-              ${topMatches.map(({r}) => `
-                <div class="conflict-item">
-                  <div class="conflict-header">
-                    <div class="conflict-title">${escapeHtml(r.TopicTitle)}</div>
-                    <div class="similarity-score">Exact match</div>
-                  </div>
-                  <div class="conflict-details">
-                    <strong>Dataset:</strong> ${escapeHtml(r.Dataset)}<br>
-                    <strong>Goal:</strong> ${escapeHtml(r.Goal)}<br>
-                    <strong>Teacher:</strong> ${escapeHtml(r.Teacher)}
-                  </div>
-                </div>
-              `).join('')}
+        // Build cards
+        function section(title, arr){
+          if (!arr.length) return '';
+          return `
+            <div>
+              <div class="small" style="font-weight:700; margin:10px 0 6px 0;">${title}</div>
+              ${arr.slice(0, 10).map(x => buildConflictCard(x.r, x.s)).join('')}
             </div>
           `;
         }
+
+        conflictsBox.innerHTML = [
+          section('Exact conflicts (Title/Dataset):', exacts),
+          section('High similarity:', highs),
+          section('Medium similarity:', meds),
+          // keep lows hidden by default to reduce noise
+        ].join('');
+
       } catch (error) {
         availabilityNote.innerHTML = `<div class="status status-error">Error: ${error.message}</div>`;
       } finally {
@@ -647,21 +560,19 @@
       }
     }
 
-    // Add booking
+    // ====== ADD BOOKING ======
     async function addBooking() {
-      // Validate Student ID
-      const studentIdValue = input.studentId.value.trim();
+      const studentIdValue = (input.studentId.value || '').trim();
       if (studentIdValue && !validateStudentId(studentIdValue)) {
         addStatus.innerHTML = '<div class="status status-error">❌ Invalid Student ID format</div>';
         return;
       }
 
-      addBtn.innerHTML = '<span class="spinner"></span>Adding...';
+      addBtn.innerHTML = '<span class="spinner"></span> Adding...';
       addBtn.disabled = true;
       addStatus.textContent = '';
 
       try {
-        // Collect form data into payload object using SHEET_COLUMNS constants
         const payload = {
           [SHEET_COLUMNS.STUDENT_NAME]: input.studentName.value.trim(),
           [SHEET_COLUMNS.STUDENT_ID]: input.studentId.value.trim(),
@@ -674,44 +585,26 @@
         };
 
         if (!payload[SHEET_COLUMNS.STUDENT_NAME] || !payload[SHEET_COLUMNS.TOPIC_TITLE] || !payload[SHEET_COLUMNS.TEACHER]) {
-          throw new Error('Please fill in required fields: Student Name, Topic Title, and Teacher');
+          throw new Error('Please fill required fields: Student Name, Topic Title, Teacher');
         }
 
         const formData = new FormData();
         formData.append('token', API_TOKEN);
         formData.append('data', JSON.stringify(payload));
 
-        const res = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: formData
-        });
-
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
         const data = await res.json();
-        
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        
-        if (data && data.ok) {
-          addStatus.innerHTML = '<div class="status status-success">✅ Added successfully</div>';
-          
-          // Clear form
-          Object.values(input).forEach(el => {
-            if (el.tagName === 'SELECT') {
-              el.selectedIndex = 0;
-            } else {
-              el.value = '';
-            }
-          });
-          
-          // Refresh data
-          await loadRows();
-          
-          // Hide check results
-          checkResult.classList.add('hidden');
-        } else {
-          throw new Error('Unexpected response format');
-        }
+        if (data.error) throw new Error(data.error);
+        if (!data || !data.ok) throw new Error('Unexpected response format');
+
+        addStatus.innerHTML = '<div class="status status-success">✅ Added successfully</div>';
+        // Clear form
+        Object.values(input).forEach(el => { if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = ''; });
+        // Refresh list
+        await loadRows();
+        // Hide check results
+        checkResult.classList.add('hidden');
+
       } catch (err) {
         addStatus.innerHTML = `<div class="status status-error">❌ Error: ${err.message}</div>`;
       } finally {
@@ -720,46 +613,8 @@
       }
     }
 
-    // Initialize
+    // ====== INIT ======
     loadRows();
   </script>
 </body>
 </html>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  try {
-    const table = Array.from(document.querySelectorAll('h2, h3'))
-      .find(h => /Current\s*Bookings/i.test(h.textContent));
-    if (!table) return;
-    // Find the table immediately following the header
-    let t = table.nextElementSibling;
-    while (t && t.tagName !== 'TABLE') t = t.nextElementSibling;
-    if (!t) return;
-    const rows = t.querySelectorAll('tbody tr');
-    rows.forEach(tr => {
-      const dsNameCell = tr.querySelector('td:nth-child(5)'); // assuming Dataset name is 4th data col
-      let link = '';
-      // try data-link attribute first
-      if (tr.dataset && tr.dataset.datasetLink) link = tr.dataset.datasetLink;
-      // try a hidden cell with data-dataset-link
-      if (!link) {
-        const hidden = tr.querySelector('[data-dataset-link]');
-        if (hidden) link = hidden.getAttribute('data-dataset-link');
-      }
-      // try a global row cache if present
-      if (!link && window.rowCache && window.rowCache.has(tr)) {
-        link = window.rowCache.get(tr).DatasetLink || '';
-      }
-      // finally, try to parse from dataset name cell if it contains an <a>
-      if (!link && dsNameCell) {
-        const a = dsNameCell.querySelector('a[href]');
-        if (a) link = a.getAttribute('href');
-      }
-      const td = document.createElement('td');
-      td.innerHTML = link ? '<a href="' + link + '" target="_blank">Open</a>' : '';
-      tr.appendChild(td);
-    });
-  } catch(e) { console.warn('Post-render patch for Link column failed:', e); }
-});
-</script>
