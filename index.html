@@ -429,16 +429,13 @@
     // Sheet column mapping constants
     const SHEET_COLUMNS = {
       STUDENT_NAME: 'StudentName',
-      STUDENT_ID: 'StudentID', 
-      EMAIL: 'Email',
-      PROGRAM: 'Program',
+      STUDENT_ID: 'StudentID',
       TOPIC_TITLE: 'TopicTitle',
       DATASET_NAME: 'Dataset Name',    // Note: this one has spaces
       DATASET_LINK: 'Dataset Link',    // Note: this one has spaces
       GOAL: 'Goal',
       TEACHER: 'Teacher',
       STATUS: 'Status',
-      NOTES: 'Notes',
       TIMESTAMP: 'Timestamp'
     };
 
@@ -522,15 +519,12 @@
           Timestamp: r[SHEET_COLUMNS.TIMESTAMP] ? new Date(r[SHEET_COLUMNS.TIMESTAMP]) : '',
           StudentName: r[SHEET_COLUMNS.STUDENT_NAME] || '',
           StudentID: r[SHEET_COLUMNS.STUDENT_ID] || '',
-          Email: r[SHEET_COLUMNS.EMAIL] || '',
-          Program: r[SHEET_COLUMNS.PROGRAM] || '',
           TopicTitle: r[SHEET_COLUMNS.TOPIC_TITLE] || '',
           Dataset: (r[SHEET_COLUMNS.DATASET_NAME] || r.Dataset || ''),
           DatasetLink: (r[SHEET_COLUMNS.DATASET_LINK] || r.DatasetLink || ''),
           Goal: r[SHEET_COLUMNS.GOAL] || '',
           Teacher: r[SHEET_COLUMNS.TEACHER] || '',
-          Status: r[SHEET_COLUMNS.STATUS] || 'Booked',
-          Notes: r[SHEET_COLUMNS.NOTES] || ''
+          Status: r[SHEET_COLUMNS.STATUS] || 'Booked'
         }));
         
         renderRows();
@@ -721,15 +715,12 @@
         const payload = {
           [SHEET_COLUMNS.STUDENT_NAME]: input.studentName.value.trim(),
           [SHEET_COLUMNS.STUDENT_ID]: input.studentId.value.trim(),
-          [SHEET_COLUMNS.EMAIL]: '',
-          [SHEET_COLUMNS.PROGRAM]: '',
           [SHEET_COLUMNS.TOPIC_TITLE]: input.topicTitle.value.trim(),
           [SHEET_COLUMNS.DATASET_NAME]: input.dataset.value.trim(),
           [SHEET_COLUMNS.DATASET_LINK]: input.datasetLink.value.trim(),
           [SHEET_COLUMNS.GOAL]: input.goal.value.trim(),
           [SHEET_COLUMNS.TEACHER]: input.teacher.value,
-          [SHEET_COLUMNS.STATUS]: 'Booked',
-          [SHEET_COLUMNS.NOTES]: ''
+          [SHEET_COLUMNS.STATUS]: 'Booked'
         };
 
         if (!payload[SHEET_COLUMNS.STUDENT_NAME] || !payload[SHEET_COLUMNS.TOPIC_TITLE] || !payload[SHEET_COLUMNS.TEACHER]) {
