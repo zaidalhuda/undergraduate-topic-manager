@@ -5,1096 +5,561 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Undergrad Topic Booking</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f5f5f5;
-      color: #333;
-      line-height: 1.6;
-      padding: 20px;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    .header {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    .header h1 {
-      font-size: 24px;
-      color: #2563eb;
-      margin-bottom: 5px;
-    }
-    
-    .header p {
-      color: #666;
-      margin-bottom: 15px;
-    }
-    
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    .card h2 {
-      font-size: 18px;
-      margin-bottom: 15px;
-      color: #333;
-    }
-    
-    .form-group {
-      margin-bottom: 15px;
-    }
-    
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-    
-    @media (max-width: 768px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 500;
-      color: #333;
-    }
-    
-    input, textarea, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-    
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: #2563eb;
-    }
-    
-    input.error {
-      border-color: #ef4444;
-    }
-    
-    .error-message {
-      color: #ef4444;
-      font-size: 12px;
-      margin-top: 5px;
-    }
-    
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-    
-    .btn {
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-    }
-    
-    .btn:hover {
-      background-color: #1d4ed8;
-    }
-    
-    .btn:disabled {
-      background-color: #94a3b8;
-      cursor: not-allowed;
-    }
-    
-    .btn-secondary {
-      background-color: #6b7280;
-    }
-    
-    .btn-secondary:hover {
-      background-color: #4b5563;
-    }
-    
-    .btn-full {
-      width: 100%;
-    }
-    
-    .status {
-      padding: 8px 12px;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: 500;
-      display: inline-block;
-    }
-    
-    .status-success {
-      background-color: #dcfce7;
-      color: #166534;
-    }
-    
-    .status-error {
-      background-color: #fee2e2;
-      color: #991b1b;
-    }
-    
-    .status-warning {
-      background-color: #fef3c7;
-      color: #92400e;
-    }
-    
-    .filters {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-    }
-    
-    .filters input {
-      flex: 1;
-      min-width: 150px;
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    
-    table th {
-      background-color: #f8f9fa;
-      padding: 12px;
-      text-align: left;
-      font-weight: 600;
-      border-bottom: 2px solid #e5e7eb;
-    }
-    
-    table td {
-      padding: 12px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    
-    table tr:hover {
-      background-color: #f8f9fa;
-    }
-    
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #666;
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: #666;
-    }
-    
-    .conflicts {
-      margin-top: 15px;
-    }
-    
-    .conflict-item {
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-      background-color: #f9fafb;
-    }
-    
-    .conflict-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    
-    .conflict-title {
-      font-weight: 600;
-      color: #1f2937;
-      font-size: 14px;
-    }
-    
-    .conflict-score {
-      font-size: 12px;
-      font-weight: 600;
-      padding: 4px 8px;
-      border-radius: 12px;
-    }
-    
-    .score-high {
-      background-color: #fee2e2;
-      color: #991b1b;
-    }
-    
-    .score-medium {
-      background-color: #fef3c7;
-      color: #92400e;
-    }
-    
-    .score-low {
-      background-color: #dbeafe;
-      color: #1e40af;
-    }
-    
-    .conflict-details {
-      font-size: 13px;
-      color: #555;
-      line-height: 1.5;
-    }
-    
-    .similarity-breakdown {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
-    
-    .similarity-item {
-      background: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid #e5e7eb;
-    }
-    
-    .similarity-label {
-      font-weight: 500;
-      font-size: 12px;
-      color: #6b7280;
-      margin-bottom: 3px;
-    }
-    
-    .similarity-value {
-      font-size: 13px;
-      font-weight: 600;
-    }
-    
-    .similarity-match {
-      color: #dc2626;
-    }
-    
-    .similarity-partial {
-      color: #d97706;
-    }
-    
-    .similarity-none {
-      color: #059669;
-    }
-    
-    .layout {
-      display: grid;
-      grid-template-columns: 400px 1fr;
-      gap: 20px;
-    }
-    
-    @media (max-width: 1024px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    .hidden {
-      display: none;
-    }
-    
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #f3f3f3;
-      border-top: 2px solid #2563eb;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-right: 8px;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    code {
-      background-color: #f3f4f6;
-      padding: 2px 4px;
-      border-radius: 3px;
-      font-family: 'Monaco', 'Consolas', monospace;
-      font-size: 12px;
-    }
-
-    .conflict-summary {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .summary-item {
-      text-align: center;
-      padding: 8px;
-      border-radius: 6px;
-      background: white;
-    }
-
-    .summary-number {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-
-    .summary-label {
-      font-size: 11px;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* New styles for duplicate notification */
-    .duplicate-alert {
-      background-color: #fef2f2;
-      border: 1px solid #f87171;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 15px 0;
-    }
-
-    .duplicate-alert h4 {
-      color: #dc2626;
-      margin-bottom: 8px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .duplicate-alert .existing-booking {
-      background: white;
-      padding: 10px;
-      border-radius: 6px;
-      margin-top: 10px;
-      border-left: 4px solid #dc2626;
-    }
-
-    .existing-booking-detail {
-      font-size: 13px;
-      color: #374151;
-      line-height: 1.4;
-    }
+    :root{
+      --bg:#f5f5f5; --fg:#222; --muted:#666;
+      --card:#fff; --primary:#0b5; --danger:#c33; --warn:#b80;
+      --border:#e5e5e5;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; padding:24px;
+      background:var(--bg); color:var(--fg);
+      font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Inter,system-ui,sans-serif;
+      line-height:1.5;
+    }
+    .container{max-width:1200px; margin:0 auto; display:grid; gap:20px; grid-template-columns: 1.1fr 1fr;}
+    @media (max-width:1000px){ .container{grid-template-columns:1fr} }
+    h1{font-size:24px; margin:0 0 8px}
+    .sub{color:var(--muted); margin-bottom:18px}
+    .card{background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:0 1px 3px rgba(0,0,0,.05);}
+    .card .hd{padding:14px 18px; border-bottom:1px solid var(--border); font-weight:600}
+    .card .bd{padding:18px}
+    .grid{display:grid; gap:14px; grid-template-columns:repeat(12,1fr)}
+    .col-6{grid-column:span 6} .col-12{grid-column:span 12} .col-4{grid-column:span 4} .col-8{grid-column:span 8}
+    @media (max-width:720px){ .col-6,.col-8,.col-4{grid-column:span 12} }
+    label{display:block; font-size:13px; color:#444; margin:0 0 6px}
+    input[type="text"], input[type="url"], textarea, select{
+      width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; font:inherit; background:#fff; outline:none;
+    }
+    textarea{min-height:92px; resize:vertical}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      appearance:none; border:1px solid var(--border); background:#fff; color:#111; padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600;
+    }
+    .btn.primary{ background: var(--primary); border-color: var(--primary); color:#fff }
+    .btn.warn{ background: #fff8e1; border-color:#f1d48a; color:#6b4e00 }
+    .btn:disabled{opacity:.6; cursor:not-allowed}
+    .status{padding:10px 12px; border-radius:10px; border:1px solid var(--border); margin-top:8px; font-size:14px}
+    .status-success{ background:#ecfff3; border-color:#bdeccf; color:#1f6b3a }
+    .status-error{ background:#fff0f0; border-color:#f3c1c1; color:#7c1f1f }
+    .status-warn{ background:#fff8e8; border-color:#f2e0b2; color:#6a5200 }
+    .hidden{display:none !important}
+    .table{width:100%; border-collapse:collapse}
+    .table th, .table td{padding:10px 10px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; font-size:14px}
+    .table th{font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:#555; background:#fafafa}
+    .pill{display:inline-block; padding:2px 8px; background:#f2f2f2; border-radius:999px; font-size:12px}
+    .muted{color:var(--muted)}
+    .kpi{display:flex; gap:16px; flex-wrap:wrap}
+    .kpi .item{background:#fafafa; padding:10px 12px; border-radius:10px; border:1px solid var(--border); font-size:13px}
+    .hl{font-weight:700}
+    .spinner{width:16px;height:16px;border:2px solid #fff;border-top-color:transparent;border-radius:50%; display:inline-block; vertical-align:middle; animation:sp 1s linear infinite}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    .help{font-size:12px;color:#777;margin-top:6px}
+    .badge{display:inline-block;padding:2px 6px;border-radius:6px;font-size:12px;border:1px solid var(--border);background:#fff}
+    .list{margin:8px 0 0; padding-left:18px}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+    .nowrap{white-space:nowrap}
+    .note{font-size:12px;color:#666;margin-top:6px}
   </style>
+  <!--
+    IMPORTANT: Backend expectations
+    Your Google Apps Script web app should support:
+      GET  ?action=list&token=YOUR_TOKEN        -> { ok: true, rows: [ { "Student Name": "...", "Student ID": "...", "Topic Title": "...", "Dataset Name": "...", "Dataset Link": "...", "Research Goal": "...", "Supervisor": "...", "Status": "...", "Timestamp": "YYYY-MM-DD HH:MM" } ] }
+      POST form-data { token, data: JSON.stringify(row) }  -> { ok: true }
+    Column headers used EXACTLY as above (no alternates).
+  -->
 </head>
 <body>
+  <header style="max-width:1200px;margin:0 auto 16px">
+    <h1>Undergrad Topic Booking</h1>
+    <div class="sub">Check topic availability (Title • Dataset • Goal) and book it to the shared sheet. Duplicate <span class="hl">Student ID</span> is blocked on <span class="hl">Add to Sheet</span>.</div>
+  </header>
+
   <div class="container">
-    <div class="header">
-      <h1>Undergrad Topic Booking</h1>
-      <p>Manage student research topics with enhanced conflict detection</p>
-      <button id="refreshBtn" class="btn btn-secondary">↻ Refresh Data</button>
-    </div>
-
-    <div class="layout">
-      <!-- Left column -->
-      <div>
-        <!-- Check Section -->
-        <div class="card">
-          <h2>Check Availability</h2>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label>Student Name</label>
-              <input id="studentName" placeholder="e.g., Alex" />
-            </div>
-            <div class="form-group">
-              <label>Student ID (CDU)</label>
-              <input id="studentId" placeholder="2021xxxxxxxx" maxlength="12" />
-              <div id="studentIdError" class="error-message hidden">Student ID must be 12 digits starting with 2021</div>
-            </div>
+    <!-- LEFT: Form & Availability -->
+    <section class="card">
+      <div class="hd">Check Availability & Add</div>
+      <div class="bd">
+        <div class="grid">
+          <div class="col-6">
+            <label for="studentName">Student Name</label>
+            <input id="studentName" type="text" placeholder="e.g., Ahmed Ali" autocomplete="name">
+            <div class="help">Letters only (Arabic/English allowed)</div>
+          </div>
+          <div class="col-6">
+            <label for="studentId">Student ID (CDU)</label>
+            <input id="studentId" class="mono" type="text" placeholder="2021XXXXXXXX" maxlength="12" inputmode="numeric" autocomplete="off">
+            <div class="help">12 digits starting with <b>2021</b></div>
           </div>
 
-          <div class="form-group">
-            <label>Topic Title</label>
-            <input id="topicTitle" placeholder="Short descriptive title" />
+          <div class="col-12">
+            <label for="topicTitle">Topic Title</label>
+            <input id="topicTitle" type="text" placeholder="Clear, specific title">
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label>Dataset Name</label>
-              <input id="dataset" placeholder="e.g., UCI Credit" />
-            </div>
-            <div class="form-group">
-              <label>Dataset URL</label>
-              <input id="datasetLink" type="url" placeholder="https://..." />
-            </div>
+          <div class="col-6">
+            <label for="datasetName">Dataset Name</label>
+            <input id="datasetName" type="text" placeholder="Dataset name">
+          </div>
+          <div class="col-6">
+            <label for="datasetLink">Dataset Link</label>
+            <input id="datasetLink" type="url" placeholder="https://...">
           </div>
 
-          <div class="form-group">
-            <label>Research Goal</label>
-            <textarea id="goal" placeholder="Describe the research objective"></textarea>
+          <div class="col-12">
+            <label for="goal">Research Goal</label>
+            <textarea id="goal" placeholder="Describe the research goal briefly"></textarea>
           </div>
 
-          <div class="form-group">
-            <label>Supervisor</label>
-            <select id="teacher">
-              <option value="">Select Supervisor</option>
-              <option value="Cezar">Cezar</option>
-              <option value="Gladys">Gladys</option>
-              <option value="IJ">IJ</option>
-              <option value="Isaac">Isaac</option>
-              <option value="James">James</option>
-              <option value="Javed">Javed</option>
-              <option value="Joao">Joao</option>
-              <option value="Linda">Linda</option>
-              <option value="Martin">Martin</option>
-              <option value="Meropi">Meropi</option>
-              <option value="Pedro">Pedro</option>
-              <option value="Stacy">Stacy</option>
-              <option value="Taha">Taha</option>
-              <option value="Yuefei">Yuefei</option>
-              <option value="Zaid">Zaid</option>
+          <div class="col-6">
+            <label for="supervisor">Supervisor</label>
+            <select id="supervisor">
+              <!-- Sorted alphabetically -->
+              <option value="" selected disabled>Choose a supervisor…</option>
+              <option>Cezar</option>
+              <option>Gladys</option>
+              <option>IJ</option>
+              <option>Isaac</option>
+              <option>James</option>
+              <option>Javed</option>
+              <option>Joao</option>
+              <option>Linda</option>
+              <option>Martin</option>
+              <option>Meropi</option>
+              <option>Pedro</option>
+              <option>Stacy</option>
+              <option>Taha</option>
+              <option>Yuefei</option>
+              <option>Zaid</option>
             </select>
           </div>
 
-          <button id="checkBtn" class="btn btn-full">Check Availability</button>
+          <div class="col-12">
+            <div class="row">
+              <button id="checkBtn" class="btn">Check Availability</button>
+              <button id="addBtn" class="btn primary">Add to Sheet</button>
+              <button id="refreshBtn" class="btn">Refresh Bookings</button>
+            </div>
+            <div id="checkStatus" class="status status-warn hidden"></div>
+            <div id="addStatus" class="status hidden"></div>
+          </div>
 
-          <div id="checkResult" class="hidden">
-            <div id="availabilityNote" style="margin-top: 15px;"></div>
-            <div id="conflicts"></div>
+          <div class="col-12">
+            <div id="checkResult" class="hidden">
+              <div class="kpi">
+                <div class="item">Exact conflicts: <span id="kpiExact" class="hl">0</span></div>
+                <div class="item">Similar titles: <span id="kpiTitle" class="hl">0</span></div>
+                <div class="item">Similar datasets: <span id="kpiDataset" class="hl">0</span></div>
+                <div class="item">Similar goals: <span id="kpiGoal" class="hl">0</span></div>
+              </div>
+
+              <div id="exactConflicts" class="note" style="margin-top:12px"></div>
+
+              <div style="margin-top:12px">
+                <details>
+                  <summary><span class="badge">Title Similarity</span> <span class="muted">(top 8)</span></summary>
+                  <div id="simTitles"></div>
+                </details>
+              </div>
+              <div style="margin-top:8px">
+                <details>
+                  <summary><span class="badge">Dataset Similarity</span> <span class="muted">(top 8)</span></summary>
+                  <div id="simDatasets"></div>
+                </details>
+              </div>
+              <div style="margin-top:8px">
+                <details>
+                  <summary><span class="badge">Goal Similarity</span> <span class="muted">(top 8)</span></summary>
+                  <div id="simGoals"></div>
+                </details>
+              </div>
+            </div>
           </div>
         </div>
-
-        <!-- Add Section -->
-        <div class="card">
-          <h2>Add Booking</h2>
-          <p style="margin-bottom: 15px; color: #666;">Submit your topic if it's available.</p>
-          
-          <button id="addBtn" class="btn btn-full">Add to Sheet</button>
-          <div id="addStatus" style="margin-top: 10px; text-align: center;"></div>
-        </div>
       </div>
+    </section>
 
-      <!-- Right column -->
-      <div class="card">
-        <h2>Current Bookings</h2>
-        
-        <div class="filters">
-          <input id="filterText" placeholder="Search..." />
-          <input id="filterTeacher" placeholder="Filter by Teacher" />
-          <button id="clearFilters" class="btn btn-secondary">Clear</button>
+    <!-- RIGHT: Current Bookings -->
+    <section class="card">
+      <div class="hd">Current Bookings</div>
+      <div class="bd">
+        <div class="row" style="margin-bottom:10px">
+          <input id="filter" class="mono" type="text" placeholder="Filter by title, dataset, student…" style="flex:1">
+          <button id="clearFilter" class="btn">Clear</button>
         </div>
-
-        <div style="overflow-x: auto;">
-          <table>
+        <div class="muted" style="margin-bottom:8px">Showing: <span id="count">0</span></div>
+        <div class="table-wrap" style="max-height:520px; overflow:auto; border:1px solid var(--border); border-radius:10px">
+          <table class="table" id="bookingsTable">
             <thead>
               <tr>
-                <th>#</th>
+                <th class="nowrap">Timestamp</th>
                 <th>Student</th>
-                <th>Topic</th>
-                <th>Dataset</th>
-                <th>Goal</th>
-                <th>Teacher</th>
+                <th class="nowrap">Student ID</th>
+                <th>Topic Title</th>
+                <th>Dataset Name</th>
+                <th>Supervisor</th>
                 <th>Status</th>
               </tr>
             </thead>
-            <tbody id="rows"></tbody>
+            <tbody id="bookingsBody"></tbody>
           </table>
         </div>
+        <div class="help">Note: Dataset <b>Link</b> is intentionally hidden here as requested.</div>
       </div>
-    </div>
+    </section>
   </div>
 
   <script>
-    // Configuration
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxv7iau-cZ0iF29D3EaFehf0q5xoBJ2iOV0O7Pz2R_-bxRZDnt3S9DY1-jGDtiK0iKaLg/exec';
-    const API_TOKEN = 'my-secret-123';
+    // ====== CONFIG ======
+    const SCRIPT_URL = "https://YOUR_APPS_SCRIPT_DEPLOYMENT_URL/exec"; // TODO: replace
+    const API_TOKEN  = "YOUR_SHARED_TOKEN"; // TODO: replace or leave "" if not required by backend
 
-    // Sheet column mapping constants
-    const SHEET_COLUMNS = {
-      STUDENT_NAME: 'StudentName',
-      STUDENT_ID: 'StudentID',
-      TOPIC_TITLE: 'TopicTitle',
-      DATASET_NAME: 'Dataset Name',    
-      DATASET_LINK: 'Dataset Link',    
-      GOAL: 'Goal',
-      TEACHER: 'Teacher',
-      STATUS: 'Status',
-      TIMESTAMP: 'Timestamp'
-    };
+    // The exact column headers your sheet uses
+    const SHEET_COLUMNS = Object.freeze({
+      STUDENT_NAME : "Student Name",
+      STUDENT_ID   : "Student ID",
+      TOPIC_TITLE  : "Topic Title",
+      DATASET_NAME : "Dataset Name",
+      DATASET_LINK : "Dataset Link",
+      GOAL         : "Research Goal",
+      SUPERVISOR   : "Supervisor",
+      STATUS       : "Status",
+      TIMESTAMP    : "Timestamp"
+    });
 
-    // Elements
+    // ====== STATE ======
+    let allRows = []; // array of canonical row objects
+    let filtered = [];
+
+    // ====== DOM ======
     const input = {
       studentName: document.getElementById('studentName'),
-      studentId: document.getElementById('studentId'),
-      topicTitle: document.getElementById('topicTitle'),
-      dataset: document.getElementById('dataset'),
+      studentId  : document.getElementById('studentId'),
+      topicTitle : document.getElementById('topicTitle'),
+      dataset    : document.getElementById('datasetName'),
       datasetLink: document.getElementById('datasetLink'),
-      goal: document.getElementById('goal'),
-      teacher: document.getElementById('teacher'),
+      goal       : document.getElementById('goal'),
+      teacher    : document.getElementById('supervisor')
     };
-
     const checkBtn = document.getElementById('checkBtn');
-    const checkResult = document.getElementById('checkResult');
-    const availabilityNote = document.getElementById('availabilityNote');
-    const conflictsBox = document.getElementById('conflicts');
     const addBtn = document.getElementById('addBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
     const addStatus = document.getElementById('addStatus');
-    const filterText = document.getElementById('filterText');
-    const filterTeacher = document.getElementById('filterTeacher');
-    const clearFilters = document.getElementById('clearFilters');
-    const rowsTbody = document.getElementById('rows');
-    const studentIdError = document.getElementById('studentIdError');
+    const checkStatus = document.getElementById('checkStatus');
+    const checkResult = document.getElementById('checkResult');
+    const kpiExact = document.getElementById('kpiExact');
+    const kpiTitle = document.getElementById('kpiTitle');
+    const kpiDataset = document.getElementById('kpiDataset');
+    const kpiGoal = document.getElementById('kpiGoal');
+    const simTitles = document.getElementById('simTitles');
+    const simDatasets = document.getElementById('simDatasets');
+    const simGoals = document.getElementById('simGoals');
+    const exactConflicts = document.getElementById('exactConflicts');
+    const bookingsBody = document.getElementById('bookingsBody');
+    const count = document.getElementById('count');
+    const filter = document.getElementById('filter');
+    const clearFilter = document.getElementById('clearFilter');
 
-    let allRows = [];
+    // ====== UTIL ======
+    function escapeHtml(s){
+      return (s ?? '').toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+    function normalize(s){
+      return (s ?? '').toLowerCase()
+        .replace(/https?:\/\//g, ' ')
+        .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+    function tokenize(s){
+      const txt = normalize(s);
+      if (!txt) return [];
+      const stop = new Set(['the','a','an','and','or','for','to','of','with','in','on','by','from','at','as','is','are','be','this','that','these','those']);
+      return txt.split(' ').filter(w => w && !stop.has(w));
+    }
+    function jaccard(aTokens, bTokens){
+      if (!aTokens.length || !bTokens.length) return 0;
+      const A = new Set(aTokens); const B = new Set(bTokens);
+      let inter = 0;
+      for (const t of A) if (B.has(t)) inter++;
+      const uni = A.size + B.size - inter;
+      return inter / (uni || 1);
+    }
+    function prettyScore(x){ return (Math.round(x*1000)/10).toFixed(1) + '%'; }
 
-    // Check for duplicate student ID
-    function checkDuplicateStudentId(studentId) {
-      // ============ DEBUGGING CHECKPOINT: DUPLICATE CHECK ============
-      console.log('🔍 checkDuplicateStudentId called with:', studentId);
-      console.log('📊 Total rows to check:', allRows.length);
-      
-      if (!studentId || !studentId.trim()) {
-        console.log('⚠️ No student ID provided, skipping duplicate check');
-        return null;
-      }
-      
-      const trimmedId = studentId.trim();
-      console.log('🔍 Searching for student ID:', trimmedId);
-      
-      const duplicate = allRows.find(row => {
-        const rowId = row.StudentID && row.StudentID.trim();
-        console.log('  Comparing with row:', rowId);
-        return rowId === trimmedId;
-      });
-      
-      if (duplicate) {
-        console.log('🚨 DUPLICATE FOUND:', duplicate);
-      } else {
-        console.log('✅ No duplicate found');
-      }
-      
-      return duplicate;
+    function validateStudentId(id){
+      return /^2021\d{8}$/.test((id||'').trim());
+    }
+    function validateStudentName(name){
+      // Allow Arabic and Latin letters, spaces, dots and apostrophes
+      return /^[\p{L}\s.'-]+$/u.test((name||'').trim());
+    }
+    function validateUrlMaybe(u){
+      if (!u) return true; // allow empty (dataset link optional)
+      try{ new URL(u); return true; }catch{ return false; }
     }
 
-    // Enhanced similarity calculation
-    function calculateSimilarity(str1, str2) {
-      if (!str1 || !str2) return 0;
-      
-      str1 = str1.toLowerCase().trim();
-      str2 = str2.toLowerCase().trim();
-      
-      // Exact match
-      if (str1 === str2) return 100;
-      
-      // Calculate Jaccard similarity for words
-      const words1 = new Set(str1.split(/\s+/).filter(w => w.length > 2));
-      const words2 = new Set(str2.split(/\s+/).filter(w => w.length > 2));
-      
-      if (words1.size === 0 && words2.size === 0) return 0;
-      
-      const intersection = new Set([...words1].filter(w => words2.has(w)));
-      const union = new Set([...words1, ...words2]);
-      
-      const jaccardSimilarity = intersection.size / union.size;
-      
-      // Check for substring matches
-      const substringMatch = str1.includes(str2) || str2.includes(str1);
-      
-      // Combine scores
-      let similarity = jaccardSimilarity * 100;
-      if (substringMatch && similarity < 50) {
-        similarity = Math.max(similarity, 40);
-      }
-      
-      return Math.round(similarity);
-    }
-
-    // Enhanced conflict analysis
-    function analyzeConflicts(newRow, existingRow) {
-      const titleSimilarity = calculateSimilarity(newRow.TopicTitle, existingRow.TopicTitle);
-      const datasetSimilarity = calculateSimilarity(newRow.Dataset, existingRow.Dataset);
-      const goalSimilarity = calculateSimilarity(newRow.Goal, existingRow.Goal);
-      
-      // Check for exact dataset URL match
-      const urlMatch = newRow.DatasetLink && existingRow.DatasetLink && 
-                      newRow.DatasetLink.trim() === existingRow.DatasetLink.trim();
-      
-      if (urlMatch) {
-        return {
-          titleSimilarity,
-          datasetSimilarity: 100,
-          goalSimilarity,
-          urlMatch: true,
-          overallRisk: 'high',
-          maxSimilarity: 100
-        };
-      }
-      
-      const maxSimilarity = Math.max(titleSimilarity, datasetSimilarity, goalSimilarity);
-      
-      let overallRisk = 'low';
-      if (maxSimilarity >= 80 || (titleSimilarity >= 60 && datasetSimilarity >= 60)) {
-        overallRisk = 'high';
-      } else if (maxSimilarity >= 50 || (titleSimilarity >= 40 && goalSimilarity >= 40)) {
-        overallRisk = 'medium';
-      }
-      
+    function canonicalizeRow(r){
+      // Expect EXACT headers; do not guess alternates.
       return {
-        titleSimilarity,
-        datasetSimilarity,
-        goalSimilarity,
-        urlMatch: false,
-        overallRisk,
-        maxSimilarity
+        StudentName : r[SHEET_COLUMNS.STUDENT_NAME] ?? '',
+        StudentID   : r[SHEET_COLUMNS.STUDENT_ID] ?? '',
+        TopicTitle  : r[SHEET_COLUMNS.TOPIC_TITLE] ?? '',
+        DatasetName : r[SHEET_COLUMNS.DATASET_NAME] ?? '',
+        DatasetLink : r[SHEET_COLUMNS.DATASET_LINK] ?? '',
+        Goal        : r[SHEET_COLUMNS.GOAL] ?? '',
+        Supervisor  : r[SHEET_COLUMNS.SUPERVISOR] ?? '',
+        Status      : r[SHEET_COLUMNS.STATUS] ?? '',
+        Timestamp   : r[SHEET_COLUMNS.TIMESTAMP] ?? ''
       };
     }
 
-    // Student ID validation
-    function validateStudentId(value) {
-      const pattern = /^2021\d{8}$/;
-      return pattern.test(value);
+    // ====== API ======
+    async function loadRows(){
+      checkStatus.classList.add('hidden');
+      try{
+        const url = new URL(SCRIPT_URL);
+        url.searchParams.set('action', 'list');
+        if (API_TOKEN) url.searchParams.set('token', API_TOKEN);
+        const res = await fetch(url.toString(), { method: 'GET' });
+        if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+        const data = await res.json();
+        if (!data || !data.ok || !Array.isArray(data.rows)) throw new Error('Unexpected response format');
+        allRows = data.rows.map(canonicalizeRow);
+        filtered = allRows.slice();
+        renderBookings(filtered);
+      }catch(err){
+        checkStatus.textContent = '⚠️ Could not load current bookings: ' + err.message;
+        checkStatus.className = 'status status-warn';
+        checkStatus.classList.remove('hidden');
+        allRows = []; filtered = []; renderBookings([]);
+      }
     }
 
-    // Event listeners
-    document.getElementById('refreshBtn').addEventListener('click', loadRows);
-    clearFilters.addEventListener('click', () => {
-      filterText.value = '';
-      filterTeacher.value = '';
-      renderRows();
+    async function addRow(payload){
+      const form = new FormData();
+      if (API_TOKEN) form.append('token', API_TOKEN);
+      form.append('data', JSON.stringify(payload));
+      const res = await fetch(SCRIPT_URL, { method:'POST', body: form });
+      if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+      const data = await res.json();
+      if (!data || data.error) throw new Error(data && data.error ? data.error : 'Unexpected response format');
+      if (!data.ok) throw new Error('Request not ok');
+      return true;
+    }
+
+    // ====== RENDER ======
+    function renderBookings(rows){
+      bookingsBody.innerHTML = '';
+      for (const r of rows){
+        const tr = document.createElement('tr');
+        tr.innerHTML = [
+          '<td class="nowrap">' + escapeHtml(r.Timestamp) + '</td>',
+          '<td>' + escapeHtml(r.StudentName) + '</td>',
+          '<td class="mono nowrap">' + escapeHtml(r.StudentID) + '</td>',
+          '<td>' + escapeHtml(r.TopicTitle) + '</td>',
+          '<td>' + escapeHtml(r.DatasetName) + '</td>',
+          '<td>' + escapeHtml(r.Supervisor) + '</td>',
+          '<td><span class="pill">' + escapeHtml(r.Status || 'Booked') + '</span></td>'
+        ].join('');
+        bookingsBody.appendChild(tr);
+      }
+      count.textContent = String(rows.length);
+    }
+
+    // ====== FILTER ======
+    filter.addEventListener('input', () => {
+      const q = normalize(filter.value);
+      if (!q){ filtered = allRows.slice(); renderBookings(filtered); return; }
+      filtered = allRows.filter(r => {
+        const hay = normalize([r.StudentName,r.StudentID,r.TopicTitle,r.DatasetName,r.Supervisor,r.Status].join(' '));
+        return hay.includes(q);
+      });
+      renderBookings(filtered);
     });
-    filterText.addEventListener('input', renderRows);
-    filterTeacher.addEventListener('input', renderRows);
+    clearFilter.addEventListener('click', () => { filter.value=''; filtered = allRows.slice(); renderBookings(filtered); });
+
+    // ====== DUPLICATE CHECK (Student ID) ======
+    function checkDuplicateStudentId(studentId){
+      const target = (studentId || '').trim();
+      if (!target) return null;
+      return allRows.find(r => (r.StudentID || '').trim() === target) || null;
+    }
+
+    // ====== AVAILABILITY (Title, Dataset, Goal) ======
+    function checkAvailability(){
+      const title = input.topicTitle.value.trim();
+      const dname = input.dataset.value.trim();
+      const dlink = input.datasetLink.value.trim();
+      const goal  = input.goal.value.trim();
+
+      if (!title && !dname && !goal && !dlink){
+        checkStatus.textContent = 'Please fill at least one of: Title, Dataset Name/Link, Goal.';
+        checkStatus.className = 'status status-warn';
+        checkStatus.classList.remove('hidden');
+        checkResult.classList.add('hidden');
+        return;
+      }
+      checkStatus.classList.add('hidden');
+
+      // Exact conflicts
+      const exact = allRows.filter(r =>
+        (title && normalize(r.TopicTitle) === normalize(title)) ||
+        (dname && normalize(r.DatasetName) === normalize(dname)) ||
+        (dlink && r.DatasetLink && r.DatasetLink.trim() === dlink.trim())
+      );
+
+      // Similarities (Jaccard over tokens)
+      const tTok = tokenize(title), dTok = tokenize(dname + ' ' + dlink), gTok = tokenize(goal);
+      const titleSims = [], dsSims = [], goalSims = [];
+      for (const r of allRows){
+        if (tTok.length){
+          const s = jaccard(tTok, tokenize(r.TopicTitle));
+          if (s >= 0.35) titleSims.push([s, r]);
+        }
+        if (dTok.length){
+          const s = jaccard(dTok, tokenize(r.DatasetName + ' ' + r.DatasetLink));
+          if (s >= 0.35) dsSims.push([s, r]);
+        }
+        if (gTok.length){
+          const s = jaccard(gTok, tokenize(r.Goal));
+          if (s >= 0.35) goalSims.push([s, r]);
+        }
+      }
+      titleSims.sort((a,b)=>b[0]-a[0]); dsSims.sort((a,b)=>b[0]-a[0]); goalSims.sort((a,b)=>b[0]-a[0]);
+
+      kpiExact.textContent = exact.length;
+      kpiTitle.textContent = titleSims.length;
+      kpiDataset.textContent = dsSims.length;
+      kpiGoal.textContent = goalSims.length;
+
+      exactConflicts.innerHTML = exact.length
+        ? '<div class="status status-error">❌ Exact conflicts found: ' + exact.length + '</div>'
+        : '<div class="status status-success">✅ No exact conflicts detected.</div>';
+
+      function renderList(targetEl, arr, label){
+        if (!arr.length){ targetEl.innerHTML = '<div class="muted">None</div>'; return; }
+        const top = arr.slice(0,8);
+        const items = top.map(([s, r]) => (
+          '<li>' +
+            '<div><span class="badge">'+ prettyScore(s) +'</span> ' + escapeHtml(r.TopicTitle) + '</div>' +
+            '<div class="muted">Dataset: ' + escapeHtml(r.DatasetName) + '</div>' +
+            '<div class="muted">Goal: ' + escapeHtml(r.Goal).slice(0,160) + (r.Goal.length>160?'…':'') + '</div>' +
+            '<div class="muted">Supervisor: ' + escapeHtml(r.Supervisor) + ' • Student: ' + escapeHtml(r.StudentName) + '</div>' +
+          '</li>'
+        )).join('');
+        targetEl.innerHTML = '<ol class="list">'+ items +'</ol>';
+      }
+      renderList(simTitles, titleSims, 'Titles');
+      renderList(simDatasets, dsSims, 'Datasets');
+      renderList(simGoals, goalSims, 'Goals');
+
+      checkResult.classList.remove('hidden');
+      // Scroll into view if on mobile
+      checkResult.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+
+    // ====== ADD BOOKING ======
+    async function addBooking(){
+      addStatus.textContent='';
+      addStatus.className='status hidden';
+
+      const studentIdValue = input.studentId.value.trim();
+      const studentNameValue = input.studentName.value.trim();
+      const topicTitleValue = input.topicTitle.value.trim();
+      const supervisorValue = input.teacher.value;
+
+      // Basic validations
+      if (!studentNameValue || !validateStudentName(studentNameValue)){
+        addStatus.className='status status-error';
+        addStatus.textContent = '❌ Enter a valid Student Name (letters only).';
+        return;
+      }
+      if (!studentIdValue || !validateStudentId(studentIdValue)){
+        addStatus.className='status status-error';
+        addStatus.textContent = '❌ Invalid Student ID (must be 12 digits starting with 2021).';
+        return;
+      }
+      if (!topicTitleValue){
+        addStatus.className='status status-error';
+        addStatus.textContent = '❌ Topic Title is required.';
+        return;
+      }
+      if (!supervisorValue){
+        addStatus.className='status status-error';
+        addStatus.textContent = '❌ Please choose a Supervisor.';
+        return;
+      }
+      if (!validateUrlMaybe(input.datasetLink.value.trim())){
+        addStatus.className='status status-error';
+        addStatus.textContent = '❌ Dataset Link is not a valid URL.';
+        return;
+      }
+
+      // Prevent duplicate by Student ID ONLY when adding
+      const duplicate = checkDuplicateStudentId(studentIdValue);
+      if (duplicate){
+        addStatus.className='status status-error';
+        addStatus.innerHTML = '❌ This Student ID is already booked. Booking was not added.'
+          + '<div class="note" style="margin-top:6px">'
+          + '<b>Student:</b> ' + escapeHtml(duplicate.StudentName) + '<br>'
+          + '<b>Topic:</b> ' + escapeHtml(duplicate.TopicTitle) + '<br>'
+          + '<b>Supervisor:</b> ' + escapeHtml(duplicate.Supervisor)
+          + '</div>';
+        return;
+      }
+
+      // Assemble payload matching EXACT sheet headers
+      const payload = {
+        [SHEET_COLUMNS.STUDENT_NAME]: studentNameValue,
+        [SHEET_COLUMNS.STUDENT_ID]  : studentIdValue,
+        [SHEET_COLUMNS.TOPIC_TITLE] : topicTitleValue,
+        [SHEET_COLUMNS.DATASET_NAME]: input.dataset.value.trim(),
+        [SHEET_COLUMNS.DATASET_LINK]: input.datasetLink.value.trim(),
+        [SHEET_COLUMNS.GOAL]       : input.goal.value.trim(),
+        [SHEET_COLUMNS.SUPERVISOR] : supervisorValue,
+        [SHEET_COLUMNS.STATUS]     : 'Booked'
+      };
+
+      addBtn.disabled = true;
+      addBtn.innerHTML = '<span class="spinner"></span>Adding…';
+
+      try{
+        await addRow(payload);
+        addStatus.className='status status-success';
+        addStatus.textContent = '✅ Added successfully.';
+        // Reset fields (keep supervisor choice for speed? we'll reset all)
+        input.studentName.value = '';
+        input.studentId.value = '';
+        input.topicTitle.value = '';
+        input.dataset.value = '';
+        input.datasetLink.value = '';
+        input.goal.value = '';
+        input.teacher.selectedIndex = 0;
+        checkResult.classList.add('hidden');
+        await loadRows();
+      }catch(err){
+        addStatus.className='status status-error';
+        addStatus.textContent = '❌ Error: ' + err.message;
+      }finally{
+        addBtn.disabled = false;
+        addBtn.textContent = 'Add to Sheet';
+      }
+    }
+
+    // ====== EVENTS ======
     checkBtn.addEventListener('click', checkAvailability);
     addBtn.addEventListener('click', addBooking);
+    refreshBtn.addEventListener('click', loadRows);
 
-    // Student ID validation on input
-    input.studentId.addEventListener('input', function() {
-      const value = this.value.trim();
-      if (value && !validateStudentId(value)) {
-        this.classList.add('error');
-        studentIdError.classList.remove('hidden');
-      } else {
-        this.classList.remove('error');
-        studentIdError.classList.add('hidden');
-      }
+    // Enforce numeric typing for Student ID
+    input.studentId.addEventListener('input', () => {
+      input.studentId.value = input.studentId.value.replace(/[^0-9]/g,'');
     });
 
-    // Load data
-    async function loadRows() {
-      rowsTbody.innerHTML = '<tr><td colspan="7" class="loading">Loading...</td></tr>';
-      
-      try {
-        const url = `${SCRIPT_URL}?action=list&token=${encodeURIComponent(API_TOKEN)}`;
-        const res = await fetch(url);
-        
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-        }
-        
-        const data = await res.json();
-        
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        
-        allRows = (data.rows || []).map((r, idx) => ({
-          idx,
-          Timestamp: r[SHEET_COLUMNS.TIMESTAMP] ? new Date(r[SHEET_COLUMNS.TIMESTAMP]) : '',
-          StudentName: r[SHEET_COLUMNS.STUDENT_NAME] || '',
-          StudentID: r[SHEET_COLUMNS.STUDENT_ID] || '',
-          TopicTitle: r[SHEET_COLUMNS.TOPIC_TITLE] || '',
-          Dataset: (r[SHEET_COLUMNS.DATASET_NAME]  || ''),
-          DatasetLink: (r[SHEET_COLUMNS.DATASET_LINK] || ''),
-          Goal: r[SHEET_COLUMNS.GOAL] || '',
-          Teacher: r[SHEET_COLUMNS.TEACHER] || '',
-          Status: r[SHEET_COLUMNS.STATUS] || 'Booked'
-        }));
-        
-        renderRows();
-      } catch (err) {
-        rowsTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">Error: ${err.message}</td></tr>`;
-      }
-    }
-
-    // Render table rows
-    function renderRows() {
-      const searchText = filterText.value.toLowerCase();
-      const teacherFilter = filterTeacher.value.toLowerCase();
-      
-      const filtered = allRows.filter(r => {
-        const searchTarget = `${r.StudentName} ${r.TopicTitle} ${r.Dataset} ${r.Goal} ${r.Teacher}`.toLowerCase();
-        const matchesSearch = !searchText || searchTarget.includes(searchText);
-        const matchesTeacher = !teacherFilter || r.Teacher.toLowerCase().includes(teacherFilter);
-        return matchesSearch && matchesTeacher;
-      });
-
-      if (filtered.length === 0) {
-        rowsTbody.innerHTML = '<tr><td colspan="7" class="empty-state">No bookings found</td></tr>';
-        return;
-      }
-
-      rowsTbody.innerHTML = filtered.map((r, i) => `
-        <tr>
-          <td>${i + 1}</td>
-          <td>
-            <div style="font-weight: 500;">${escapeHtml(r.StudentName)}</div>
-            <div style="font-size: 12px; color: #666;">ID: ${escapeHtml(r.StudentID)}</div>
-          </td>
-          <td>${escapeHtml(r.TopicTitle)}</td>
-          <td>
-            <div style="font-weight: 500; color: #2563eb; margin-bottom: 4px;">${escapeHtml(r.Dataset || 'No dataset specified')}</div>
-            ${r.DatasetLink ? `
-              <a href="${escapeHtml(r.DatasetLink)}" target="_blank" style="color: #059669; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 2px;">
-                🔗 View Dataset
-              </a>
-            ` : '<span style="color: #9ca3af; font-size: 12px;">No link provided</span>'}
-          </td>
-          <td style="max-width: 200px; word-wrap: break-word;">${escapeHtml(r.Goal)}</td>
-          <td>${escapeHtml(r.Teacher)}</td>
-          <td>${getStatusBadge(r.Status)}</td>
-        </tr>
-      `).join('');
-    }
-
-    // Status badge
-    function getStatusBadge(status) {
-      const s = (status || 'Booked').toLowerCase();
-      if (s.includes('book')) return '<span class="status status-success">Booked</span>';
-      if (s.includes('pending')) return '<span class="status status-warning">Pending</span>';
-      return `<span class="status status-warning">${escapeHtml(status || 'Unknown')}</span>`;
-    }
-
-    // Escape HTML
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    // Enhanced availability check
-    async function checkAvailability() {
-      checkBtn.innerHTML = '<span class="spinner"></span>Checking...';
-      checkBtn.disabled = true;
-      
-      availabilityNote.innerHTML = '';
-      conflictsBox.innerHTML = '';
-      checkResult.classList.remove('hidden');
-
-      try {
-        const candidate = {
-          TopicTitle: input.topicTitle.value.trim(),
-          Dataset: input.dataset.value.trim(),
-          DatasetLink: input.datasetLink.value.trim(),
-          Goal: input.goal.value.trim()
-        };
-
-        if (!candidate.TopicTitle && !candidate.Dataset && !candidate.Goal) {
-          availabilityNote.innerHTML = '<div class="status status-warning">Please enter topic, dataset, or goal to check for conflicts</div>';
-          return;
-        }
-
-        // Analyze all conflicts
-        let conflicts = [];
-        for (const r of allRows) {
-          const analysis = analyzeConflicts(candidate, r);
-          if (analysis.maxSimilarity > 15) { // Only show meaningful similarities
-            conflicts.push({ row: r, analysis });
-          }
-        }
-
-        // Sort by risk and similarity
-        conflicts.sort((a, b) => {
-          const riskOrder = { high: 3, medium: 2, low: 1 };
-          const riskDiff = riskOrder[b.analysis.overallRisk] - riskOrder[a.analysis.overallRisk];
-          if (riskDiff !== 0) return riskDiff;
-          return b.analysis.maxSimilarity - a.analysis.maxSimilarity;
-        });
-
-        // Categorize conflicts
-        const highRisk = conflicts.filter(c => c.analysis.overallRisk === 'high');
-        const mediumRisk = conflicts.filter(c => c.analysis.overallRisk === 'medium');
-        const lowRisk = conflicts.filter(c => c.analysis.overallRisk === 'low');
-
-        // Display overall status
-        if (highRisk.length > 0) {
-          availabilityNote.innerHTML = '<div class="status status-error">❌ High conflict risk - similar topics found</div>';
-        } else if (mediumRisk.length > 0) {
-          availabilityNote.innerHTML = '<div class="status status-warning">⚠️ Moderate conflict risk - potential overlaps detected</div>';
-        } else if (lowRisk.length > 0) {
-          availabilityNote.innerHTML = '<div class="status status-warning">💡 Minor similarities found - review recommended</div>';
-        } else {
-          availabilityNote.innerHTML = '<div class="status status-success">✅ No conflicts detected - topic appears available</div>';
-        }
-
-        // Display conflict details
-        if (conflicts.length > 0) {
-          const summary = `
-            <div class="conflict-summary">
-              <div class="summary-grid">
-                <div class="summary-item">
-                  <div class="summary-number" style="color: #dc2626;">${highRisk.length}</div>
-                  <div class="summary-label">High Risk</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-number" style="color: #d97706;">${mediumRisk.length}</div>
-                  <div class="summary-label">Medium Risk</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-number" style="color: #0369a1;">${lowRisk.length}</div>
-                  <div class="summary-label">Low Risk</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-number" style="color: #059669;">${allRows.length - conflicts.length}</div>
-                  <div class="summary-label">No Conflict</div>
-                </div>
-              </div>
-            </div>
-          `;
-
-          const conflictDetails = conflicts.slice(0, 10).map(({row, analysis}) => {
-            const scoreClass = analysis.overallRisk === 'high' ? 'score-high' : 
-                             analysis.overallRisk === 'medium' ? 'score-medium' : 'score-low';
-            
-            return `
-              <div class="conflict-item">
-                <div class="conflict-header">
-                  <div class="conflict-title">${escapeHtml(row.TopicTitle)}</div>
-                  <div class="conflict-score ${scoreClass}">
-                    ${analysis.overallRisk.toUpperCase()} RISK (${analysis.maxSimilarity}%)
-                  </div>
-                </div>
-                <div class="conflict-details">
-                  <strong>Student:</strong> ${escapeHtml(row.StudentName)}<br>
-                  <strong>Teacher:</strong> ${escapeHtml(row.Teacher)}<br>
-                  <strong>Dataset:</strong> ${escapeHtml(row.Dataset)}
-                  ${analysis.urlMatch ? ' <span style="color: #dc2626; font-weight: 600;">(EXACT URL MATCH)</span>' : ''}
-                </div>
-                <div class="similarity-breakdown">
-                  <div class="similarity-item">
-                    <div class="similarity-label">Topic Title</div>
-                    <div class="similarity-value ${getSimilarityClass(analysis.titleSimilarity)}">
-                      ${analysis.titleSimilarity}% match
-                    </div>
-                  </div>
-                  <div class="similarity-item">
-                    <div class="similarity-label">Dataset</div>
-                    <div class="similarity-value ${getSimilarityClass(analysis.datasetSimilarity)}">
-                      ${analysis.datasetSimilarity}% match
-                    </div>
-                  </div>
-                  <div class="similarity-item">
-                    <div class="similarity-label">Research Goal</div>
-                    <div class="similarity-value ${getSimilarityClass(analysis.goalSimilarity)}">
-                      ${analysis.goalSimilarity}% match
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join('');
-
-          const conflictAnalysisSection = conflicts.length > 0 ? `
-            <h4 style="margin-bottom: 15px;">Detailed Conflict Analysis:</h4>
-            ${conflictDetails}
-            ${conflicts.length > 10 ? `<p style="text-align: center; color: #666; margin-top: 10px;">Showing top 10 of ${conflicts.length} potential conflicts</p>` : ''}
-          ` : `
-            <p style="text-align: center; color: #059669; font-weight: 500; margin-top: 15px;">
-              🎉 No conflicts detected! Your topic appears to be unique.
-            </p>
-          `;
-
-          conflictsBox.innerHTML = `
-            <div class="conflicts">
-              ${summary}
-              ${conflictAnalysisSection}
-            </div>
-          `;
-        }
-
-      } catch (error) {
-        availabilityNote.innerHTML = `<div class="status status-error">Error: ${error.message}</div>`;
-      } finally {
-        checkBtn.innerHTML = 'Check Availability';
-        checkBtn.disabled = false;
-      }
-    }
-
-    function getSimilarityClass(similarity) {
-      if (similarity >= 70) return 'similarity-match';
-      if (similarity >= 30) return 'similarity-partial';
-      return 'similarity-none';
-    }
-
-    // Add booking with duplicate student ID check
-    async function addBooking() {
-      // Validate Student ID format
-      const studentIdValue = input.studentId.value.trim();
-      if (studentIdValue && !validateStudentId(studentIdValue)) {
-        addStatus.innerHTML = '<div class="status status-error">❌ Invalid Student ID format</div>';
-        return;
-      }
-
-      // Check for duplicate Student ID
-      if (studentIdValue) {
-        const existingBooking = checkDuplicateStudentId(studentIdValue);
-        if (existingBooking) {
-          const duplicateAlert = `
-            <div class="duplicate-alert">
-              <h4>🚨 Student ID Already Exists!</h4>
-              <p>This Student ID (${escapeHtml(studentIdValue)}) has already been used for a booking.</p>
-              <div class="existing-booking">
-                <div class="existing-booking-detail">
-                  <strong>Student Name:</strong> ${escapeHtml(existingBooking.StudentName)}<br>
-                  <strong>Topic:</strong> ${escapeHtml(existingBooking.TopicTitle)}<br>
-                  <strong>Supervisor:</strong> ${escapeHtml(existingBooking.Teacher)}<br>
-                  <strong>Status:</strong> ${escapeHtml(existingBooking.Status)}
-                </div>
-              </div>
-              <p style="margin-top: 10px; font-size: 13px; color: #6b7280;">
-                Each student can only have one booking. Please check the existing booking or contact your supervisor if you need to make changes.
-              </p>
-            </div>
-          `;
-          addStatus.innerHTML = duplicateAlert;
-          return;
-        }
-      }
-
-      addBtn.innerHTML = '<span class="spinner"></span>Adding...';
-      addBtn.disabled = true;
-      addStatus.textContent = '';
-
-      try {
-        // Collect form data into payload object using SHEET_COLUMNS constants
-        const payload = {
-          [SHEET_COLUMNS.STUDENT_NAME]: input.studentName.value.trim(),
-          [SHEET_COLUMNS.STUDENT_ID]: input.studentId.value.trim(),
-          [SHEET_COLUMNS.TOPIC_TITLE]: input.topicTitle.value.trim(),
-          [SHEET_COLUMNS.DATASET_NAME]: input.dataset.value.trim(),
-          [SHEET_COLUMNS.DATASET_LINK]: input.datasetLink.value.trim(),
-          [SHEET_COLUMNS.GOAL]: input.goal.value.trim(),
-          [SHEET_COLUMNS.TEACHER]: input.teacher.value,
-          [SHEET_COLUMNS.STATUS]: 'Booked'
-        };
-
-        if (!payload[SHEET_COLUMNS.STUDENT_NAME] || !payload[SHEET_COLUMNS.TOPIC_TITLE] || !payload[SHEET_COLUMNS.TEACHER]) {
-          throw new Error('Please fill in required fields: Student Name, Topic Title, and Teacher');
-        }
-
-        const formData = new FormData();
-        formData.append('token', API_TOKEN);
-        formData.append('data', JSON.stringify(payload));
-
-        const res = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: formData
-        });
-
-        const data = await res.json();
-        
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        
-        if (data && data.ok) {
-          addStatus.innerHTML = '<div class="status status-success">✅ Added successfully</div>';
-          
-          // Clear form
-          Object.values(input).forEach(el => {
-            if (el.tagName === 'SELECT') {
-              el.selectedIndex = 0;
-            } else {
-              el.value = '';
-            }
-          });
-          
-          // Refresh data
-          await loadRows();
-          
-          // Hide check results
-          checkResult.classList.add('hidden');
-        } else {
-          throw new Error('Unexpected response format');
-        }
-      } catch (err) {
-        addStatus.innerHTML = `<div class="status status-error">❌ Error: ${err.message}</div>`;
-      } finally {
-        addBtn.innerHTML = 'Add to Sheet';
-        addBtn.disabled = false;
-      }
-    }
-
-    // Test function for debugging duplicate detection
-    window.testDuplicateCheck = function() {
-      console.log('🧪 TESTING DUPLICATE CHECK SYSTEM');
-      console.log('📊 Current data state:');
-      console.log('  - Total rows loaded:', allRows.length);
-      console.log('  - Sample rows:', allRows.slice(0, 3));
-      
-      const testId = input.studentId.value.trim();
-      console.log('🔍 Testing Student ID:', testId);
-      
-      if (!testId) {
-        alert('Please enter a Student ID to test');
-        return;
-      }
-      
-      const duplicate = checkDuplicateStudentId(testId);
-      
-      if (duplicate) {
-        alert(`🚨 DUPLICATE FOUND!\nStudent: ${duplicate.StudentName}\nTopic: ${duplicate.TopicTitle}\nTeacher: ${duplicate.Teacher}`);
-      } else {
-        alert('✅ No duplicate found - this Student ID is available');
-      }
-    };
-
-    // Initialize
-    console.log('🚀 Initializing application...');
-    console.log('📊 Configuration:', { SCRIPT_URL, API_TOKEN });
-    console.log('🔍 Elements check:', {
-      addBtn: !!addBtn,
-      addStatus: !!addStatus,
-      checkBtn: !!checkBtn,
-      allInputsFound: Object.values(input).every(el => !!el)
-    });
-    
-    // Add test button functionality
-    const testBtn = document.getElementById('testBtn');
-    if (testBtn) {
-      testBtn.addEventListener('click', function() {
-        console.log('🧪 Test button clicked!');
-        addStatus.innerHTML = '<div class="status status-success">✅ Test button works! JavaScript is functioning correctly.</div>';
-        
-        // Test form values
-        console.log('📝 Current form values:');
-        Object.entries(input).forEach(([key, element]) => {
-          console.log(`  ${key}:`, element.value);
-        });
-      });
-    }
-    
-    loadRows();
+    // ====== INIT ======
+    document.addEventListener('DOMContentLoaded', loadRows);
   </script>
 </body>
 </html>
