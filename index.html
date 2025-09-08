@@ -376,33 +376,34 @@
       letter-spacing: 0.5px;
     }
 
-    /* NEW: Duplicate alert styling */
+    /* New styles for duplicate notification */
     .duplicate-alert {
-      background: #fef2f2;
-      border: 2px solid #fca5a5;
+      background-color: #fef2f2;
+      border: 1px solid #f87171;
       border-radius: 8px;
       padding: 15px;
       margin: 15px 0;
     }
 
     .duplicate-alert h4 {
-      color: #991b1b;
+      color: #dc2626;
       margin-bottom: 8px;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
     }
 
-    .duplicate-alert .student-info {
+    .duplicate-alert .existing-booking {
       background: white;
       padding: 10px;
       border-radius: 6px;
+      margin-top: 10px;
       border-left: 4px solid #dc2626;
     }
 
-    .duplicate-alert .student-info strong {
-      color: #991b1b;
+    .existing-booking-detail {
+      font-size: 13px;
+      color: #374151;
+      line-height: 1.4;
     }
   </style>
 </head>
@@ -410,7 +411,7 @@
   <div class="container">
     <div class="header">
       <h1>Undergrad Topic Booking</h1>
-      <p>Manage student research topics with enhanced conflict detection and duplicate prevention</p>
+      <p>Manage student research topics with enhanced conflict detection</p>
       <button id="refreshBtn" class="btn btn-secondary">↻ Refresh Data</button>
     </div>
 
@@ -480,7 +481,6 @@
 
           <div id="checkResult" class="hidden">
             <div id="availabilityNote" style="margin-top: 15px;"></div>
-            <div id="duplicateAlert"></div>
             <div id="conflicts"></div>
           </div>
         </div>
@@ -557,7 +557,6 @@
     const checkBtn = document.getElementById('checkBtn');
     const checkResult = document.getElementById('checkResult');
     const availabilityNote = document.getElementById('availabilityNote');
-    const duplicateAlert = document.getElementById('duplicateAlert');
     const conflictsBox = document.getElementById('conflicts');
     const addBtn = document.getElementById('addBtn');
     const addStatus = document.getElementById('addStatus');
@@ -569,16 +568,14 @@
 
     let allRows = [];
 
-    // NEW: Check for duplicate student ID
+    // Check for duplicate student ID
     function checkDuplicateStudentId(studentId) {
       if (!studentId || !studentId.trim()) return null;
       
-      const normalizedId = studentId.trim();
-      const duplicate = allRows.find(row => 
-        row.StudentID && row.StudentID.trim() === normalizedId
+      const trimmedId = studentId.trim();
+      return allRows.find(row => 
+        row.StudentID && row.StudentID.trim() === trimmedId
       );
-      
-      return duplicate || null;
     }
 
     // Enhanced similarity calculation
@@ -776,48 +773,16 @@
       return div.innerHTML;
     }
 
-    // Enhanced availability check with duplicate detection
+    // Enhanced availability check
     async function checkAvailability() {
       checkBtn.innerHTML = '<span class="spinner"></span>Checking...';
       checkBtn.disabled = true;
       
       availabilityNote.innerHTML = '';
-      duplicateAlert.innerHTML = '';
       conflictsBox.innerHTML = '';
       checkResult.classList.remove('hidden');
 
       try {
-        const studentIdValue = input.studentId.value.trim();
-        
-        // FIRST: Check for duplicate student ID
-        let hasDuplicate = false;
-        if (studentIdValue) {
-          const duplicate = checkDuplicateStudentId(studentIdValue);
-          if (duplicate) {
-            hasDuplicate = true;
-            duplicateAlert.innerHTML = `
-              <div class="duplicate-alert">
-                <h4>⚠️ Student ID Already Registered</h4>
-                <p style="margin-bottom: 10px;">This Student ID has already been used for a booking:</p>
-                <div class="student-info">
-                  <p><strong>Student:</strong> ${escapeHtml(duplicate.StudentName)}</p>
-                  <p><strong>Topic:</strong> ${escapeHtml(duplicate.TopicTitle)}</p>
-                  <p><strong>Dataset:</strong> ${escapeHtml(duplicate.Dataset)}</p>
-                  <p><strong>Supervisor:</strong> ${escapeHtml(duplicate.Teacher)}</p>
-                  <p><strong>Status:</strong> ${escapeHtml(duplicate.Status)}</p>
-                </div>
-                <p style="margin-top: 10px; color: #991b1b; font-weight: 500;">
-                  ❌ Cannot create multiple bookings with the same Student ID.
-                </p>
-              </div>
-            `;
-            
-            availabilityNote.innerHTML = '<div class="status status-error">❌ Student ID already exists - cannot proceed with booking</div>';
-            return; // Stop here if duplicate found
-          }
-        }
-
-        // SECOND: Check for topic/dataset conflicts (only if no duplicate)
         const candidate = {
           TopicTitle: input.topicTitle.value.trim(),
           Dataset: input.dataset.value.trim(),
@@ -826,11 +791,7 @@
         };
 
         if (!candidate.TopicTitle && !candidate.Dataset && !candidate.Goal) {
-          if (studentIdValue) {
-            availabilityNote.innerHTML = '<div class="status status-success">✅ Student ID is available</div>';
-          } else {
-            availabilityNote.innerHTML = '<div class="status status-warning">Please enter topic, dataset, or goal to check for conflicts</div>';
-          }
+          availabilityNote.innerHTML = '<div class="status status-warning">Please enter topic, dataset, or goal to check for conflicts</div>';
           return;
         }
 
@@ -857,19 +818,14 @@
         const lowRisk = conflicts.filter(c => c.analysis.overallRisk === 'low');
 
         // Display overall status
-        let statusMessage = '';
-        if (studentIdValue) {
-          statusMessage += '✅ Student ID is available. ';
-        }
-
         if (highRisk.length > 0) {
-          availabilityNote.innerHTML = `<div class="status status-error">${statusMessage}❌ High conflict risk - similar topics found</div>`;
+          availabilityNote.innerHTML = '<div class="status status-error">❌ High conflict risk - similar topics found</div>';
         } else if (mediumRisk.length > 0) {
-          availabilityNote.innerHTML = `<div class="status status-warning">${statusMessage}⚠️ Moderate conflict risk - potential overlaps detected</div>`;
+          availabilityNote.innerHTML = '<div class="status status-warning">⚠️ Moderate conflict risk - potential overlaps detected</div>';
         } else if (lowRisk.length > 0) {
-          availabilityNote.innerHTML = `<div class="status status-warning">${statusMessage}💡 Minor similarities found - review recommended</div>`;
+          availabilityNote.innerHTML = '<div class="status status-warning">💡 Minor similarities found - review recommended</div>';
         } else {
-          availabilityNote.innerHTML = `<div class="status status-success">${statusMessage}✅ No conflicts detected - topic appears available</div>`;
+          availabilityNote.innerHTML = '<div class="status status-success">✅ No conflicts detected - topic appears available</div>';
         }
 
         // Display conflict details
@@ -910,7 +866,7 @@
                   </div>
                 </div>
                 <div class="conflict-details">
-                  <strong>Student:</strong> ${escapeHtml(row.StudentName)} (ID: ${escapeHtml(row.StudentID)})<br>
+                  <strong>Student:</strong> ${escapeHtml(row.StudentName)}<br>
                   <strong>Teacher:</strong> ${escapeHtml(row.Teacher)}<br>
                   <strong>Dataset:</strong> ${escapeHtml(row.Dataset)}
                   ${analysis.urlMatch ? ' <span style="color: #dc2626; font-weight: 600;">(EXACT URL MATCH)</span>' : ''}
@@ -971,7 +927,7 @@
       return 'similarity-none';
     }
 
-    // Enhanced add booking with duplicate prevention
+    // Add booking with duplicate student ID check
     async function addBooking() {
       // Validate Student ID format
       const studentIdValue = input.studentId.value.trim();
@@ -980,16 +936,28 @@
         return;
       }
 
-      // Check for duplicate Student ID before submission
+      // Check for duplicate Student ID
       if (studentIdValue) {
-        const duplicate = checkDuplicateStudentId(studentIdValue);
-        if (duplicate) {
-          addStatus.innerHTML = `
-            <div class="status status-error">
-              ❌ Student ID ${studentIdValue} is already registered to ${duplicate.StudentName}. 
-              Cannot create duplicate booking.
+        const existingBooking = checkDuplicateStudentId(studentIdValue);
+        if (existingBooking) {
+          const duplicateAlert = `
+            <div class="duplicate-alert">
+              <h4>🚨 Student ID Already Exists!</h4>
+              <p>This Student ID (${escapeHtml(studentIdValue)}) has already been used for a booking.</p>
+              <div class="existing-booking">
+                <div class="existing-booking-detail">
+                  <strong>Student Name:</strong> ${escapeHtml(existingBooking.StudentName)}<br>
+                  <strong>Topic:</strong> ${escapeHtml(existingBooking.TopicTitle)}<br>
+                  <strong>Supervisor:</strong> ${escapeHtml(existingBooking.Teacher)}<br>
+                  <strong>Status:</strong> ${escapeHtml(existingBooking.Status)}
+                </div>
+              </div>
+              <p style="margin-top: 10px; font-size: 13px; color: #6b7280;">
+                Each student can only have one booking. Please check the existing booking or contact your supervisor if you need to make changes.
+              </p>
             </div>
           `;
+          addStatus.innerHTML = duplicateAlert;
           return;
         }
       }
