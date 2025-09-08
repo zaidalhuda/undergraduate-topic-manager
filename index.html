@@ -1051,6 +1051,30 @@
     };
 
     // Initialize
+    console.log('🚀 Initializing application...');
+    console.log('📊 Configuration:', { SCRIPT_URL, API_TOKEN });
+    console.log('🔍 Elements check:', {
+      addBtn: !!addBtn,
+      addStatus: !!addStatus,
+      checkBtn: !!checkBtn,
+      allInputsFound: Object.values(input).every(el => !!el)
+    });
+    
+    // Add test button functionality
+    const testBtn = document.getElementById('testBtn');
+    if (testBtn) {
+      testBtn.addEventListener('click', function() {
+        console.log('🧪 Test button clicked!');
+        addStatus.innerHTML = '<div class="status status-success">✅ Test button works! JavaScript is functioning correctly.</div>';
+        
+        // Test form values
+        console.log('📝 Current form values:');
+        Object.entries(input).forEach(([key, element]) => {
+          console.log(`  ${key}:`, element.value);
+        });
+      });
+    }
+    
     loadRows();
   </script>
 </body>
