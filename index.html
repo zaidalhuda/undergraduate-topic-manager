@@ -510,7 +510,7 @@
           Program: r.Program || '',
           TopicTitle: r.TopicTitle || '',
           Dataset: (r['Dataset Name'] || r.Dataset || ''),
-          DatasetLink: (r['Dataset Link'] || r.DatasetLink || ''),
+          DatasetLink: (r['Dataset Link'] || r['Dataset URL'] || r.DatasetLink || ''),
           Goal: r.Goal || '',
           Teacher: r.Teacher || '',
           Status: r.Status || 'Booked',
@@ -707,8 +707,12 @@
           Email: '', // Not collected anymore
           Program: '', // Not collected anymore
           TopicTitle: input.topicTitle.value.trim(),
-          'Dataset Name': input.dataset.value.trim(), // Match Google Sheet column name
-          'Dataset Link': input.datasetLink.value.trim(), // Match Google Sheet column name
+          // Dataset fields: send multiple synonyms to match sheet headers
+          'Dataset Name': input.dataset.value.trim(),
+          Dataset: input.dataset.value.trim(),
+          'Dataset Link': input.datasetLink.value.trim(),
+          'Dataset URL': input.datasetLink.value.trim(),
+          DatasetLink: input.datasetLink.value.trim(),
           Goal: input.goal.value.trim(),
           Teacher: input.teacher.value,
           Status: 'Booked',
