@@ -375,6 +375,22 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+
+    /* Scrollable table container */
+    .table-container {
+      overflow-x: auto; 
+      max-height: 600px; 
+      overflow-y: auto; 
+      border: 1px solid #e5e7eb; 
+      border-radius: 8px;
+    }
+
+    .table-container table thead {
+      position: sticky; 
+      top: 0; 
+      background: white; 
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
@@ -475,7 +491,7 @@
           <button id="clearFilters" class="btn btn-secondary">Clear</button>
         </div>
 
-        <div style="overflow-x: auto;">
+        <div class="table-container">
           <table>
             <thead>
               <tr>
