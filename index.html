@@ -960,6 +960,30 @@
       }
     }
 
+    // Test function for debugging duplicate detection
+    window.testDuplicateCheck = function() {
+      console.log('🧪 TESTING DUPLICATE CHECK SYSTEM');
+      console.log('📊 Current data state:');
+      console.log('  - Total rows loaded:', allRows.length);
+      console.log('  - Sample rows:', allRows.slice(0, 3));
+      
+      const testId = input.studentId.value.trim();
+      console.log('🔍 Testing Student ID:', testId);
+      
+      if (!testId) {
+        alert('Please enter a Student ID to test');
+        return;
+      }
+      
+      const duplicate = checkDuplicateStudentId(testId);
+      
+      if (duplicate) {
+        alert(`🚨 DUPLICATE FOUND!\nStudent: ${duplicate.StudentName}\nTopic: ${duplicate.TopicTitle}\nTeacher: ${duplicate.Teacher}`);
+      } else {
+        alert('✅ No duplicate found - this Student ID is available');
+      }
+    };
+
     // Initialize
     loadRows();
   </script>
