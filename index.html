@@ -143,7 +143,7 @@
             </div>
             <div class="form-group">
               <label>Dataset URL</label>
-              <input id="datasetLink" type="url" placeholder="https://..." />
+              <input id="datasetlink" type="url" placeholder="https://..." />
             </div>
           </div>
 
@@ -215,6 +215,7 @@
                 <th>Student</th>
                 <th>Topic</th>
                 <th>Dataset</th>
+                <th>Dataset Link</th>
                 <th>Goal</th>
                 <th>Teacher</th>
                 <th>Status</th>
@@ -241,7 +242,7 @@
       studentId: document.getElementById('studentId'),
       topicTitle: document.getElementById('topicTitle'),
       dataset: document.getElementById('dataset'),
-      datasetLink: document.getElementById('datasetLink'),
+      datasetlink: document.getElementById('datasetLink'),
       goal: document.getElementById('goal'),
       teacher: document.getElementById('teacher'),
     };
@@ -312,16 +313,12 @@
           Timestamp: r.Timestamp ? new Date(r.Timestamp) : '',
           StudentName: norm(r.StudentName),
           StudentID: norm(r.StudentID),
-          Email: norm(r.Email),
-          Program: norm(r.Program),
           TopicTitle: norm(r.TopicTitle),
-          // SINGLE SOURCE OF TRUTH — consistent, trimmed
-          Dataset: norm(r['Dataset Name']),
-          DatasetLink: norm(r['Dataset URL']),
+          Dataset: norm(r.Dataset),
+          DatasetLink: norm(r.DatasetLink),
           Goal: norm(r.Goal),
           Teacher: norm(r.Teacher),
           Status: norm(r.Status || 'Booked'),
-          Notes: norm(r.Notes),
         }));
 
         renderRows();
@@ -336,7 +333,7 @@
       const teacherFilter = (filterTeacher.value || '').toLowerCase();
 
       const filtered = allRows.filter(r => {
-        const searchTarget = `${r.StudentName} ${r.TopicTitle} ${r.Dataset} ${r.Goal} ${r.Teacher}`.toLowerCase();
+        const searchTarget = `${r.StudentName} ${r.TopicTitle} ${r.Dataset} ${r.DatasetLink} ${r.Goal} ${r.Teacher}`.toLowerCase();
         const matchesSearch = !searchText || searchTarget.includes(searchText);
         const matchesTeacher = !teacherFilter || r.Teacher.toLowerCase().includes(teacherFilter);
         return matchesSearch && matchesTeacher;
@@ -518,8 +515,8 @@
           StudentName: input.studentName.value.trim(),
           StudentID: input.studentId.value.trim(),
           TopicTitle: input.topicTitle.value.trim(),
-          'Dataset Name': input.dataset.value.trim(),
-          'Dataset URL': input.datasetLink.value.trim(), // single source of truth
+          Dataset: input.dataset.value.trim(),
+          Datasetlink: input.datasetlink.value.trim(), // single source of truth
           Goal: input.goal.value.trim(),
           Teacher: input.teacher.value,
           Status: 'Booked',
