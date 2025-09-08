@@ -690,7 +690,7 @@
       }
     }
 
-    // FIXED: Simplified and consistent field mapping
+    // FIXED: Simplified and consistent field mapping with debugging
     async function addBooking() {
       // Validate Student ID
       const studentIdValue = input.studentId.value.trim();
@@ -716,6 +716,9 @@
           Status: 'Booked'
         };
 
+        // DEBUG: Log what we're sending
+        console.log('Sending payload:', payload);
+
         if (!payload.StudentName || !payload.TopicTitle || !payload.Teacher) {
           throw new Error('Please fill in required fields: Student Name, Topic Title, and Teacher');
         }
@@ -724,12 +727,20 @@
         formData.append('token', API_TOKEN);
         formData.append('data', JSON.stringify(payload));
 
+        console.log('FormData contents:', {
+          token: API_TOKEN,
+          data: JSON.stringify(payload)
+        });
+
         const res = await fetch(SCRIPT_URL, {
           method: 'POST',
           body: formData
         });
 
         const data = await res.json();
+        
+        // DEBUG: Log the response
+        console.log('Add booking response:', data);
         
         if (data.error) {
           throw new Error(data.error);
@@ -756,6 +767,7 @@
           throw new Error('Unexpected response format');
         }
       } catch (err) {
+        console.error('Add booking error:', err);
         addStatus.innerHTML = `<div class="status status-error">❌ Error: ${err.message}</div>`;
       } finally {
         addBtn.innerHTML = 'Add to Sheet';
