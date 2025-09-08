@@ -895,44 +895,73 @@
       return 'similarity-none';
     }
 
-    // Add booking
+    // Add booking with enhanced duplicate checking
     async function addBooking() {
-      // Validate Student ID
+      // Clear previous status
+      addStatus.innerHTML = '';
+
+      // Validate Student ID format
       const studentIdValue = input.studentId.value.trim();
       if (studentIdValue && !validateStudentId(studentIdValue)) {
-        addStatus.innerHTML = '<div class="status status-error">❌ Invalid Student ID format</div>';
+        addStatus.innerHTML = '<div class="status status-error">❌ Invalid Student ID format. Must be 12 digits starting with 2021</div>';
+        input.studentId.focus();
+        return;
+      }
+
+      // Check if Student ID is provided and validate
+      if (!studentIdValue) {
+        addStatus.innerHTML = '<div class="status status-error">❌ Student ID is required</div>';
+        input.studentId.focus();
         return;
       }
 
       // Check for duplicate Student ID
-      if (studentIdValue) {
-        const existingStudent = allRows.find(row => row.StudentID === studentIdValue);
-        if (existingStudent) {
-          addStatus.innerHTML = `<div class="status status-error">❌ Student ID ${studentIdValue} already exists for ${existingStudent.StudentName}</div>`;
-          return;
-        }
+      const existingStudent = allRows.find(row => row.StudentID === studentIdValue);
+      if (existingStudent) {
+        addStatus.innerHTML = `<div class="status status-error">❌ Student ID ${studentIdValue} is already registered for student "${existingStudent.StudentName}". Each student can only have one topic.</div>`;
+        input.studentId.focus();
+        return;
       }
 
+      // Validate required fields
+      const studentName = input.studentName.value.trim();
+      const topicTitle = input.topicTitle.value.trim();
+      const teacher = input.teacher.value;
+
+      if (!studentName) {
+        addStatus.innerHTML = '<div class="status status-error">❌ Student Name is required</div>';
+        input.studentName.focus();
+        return;
+      }
+
+      if (!topicTitle) {
+        addStatus.innerHTML = '<div class="status status-error">❌ Topic Title is required</div>';
+        input.topicTitle.focus();
+        return;
+      }
+
+      if (!teacher) {
+        addStatus.innerHTML = '<div class="status status-error">❌ Supervisor selection is required</div>';
+        input.teacher.focus();
+        return;
+      }
+
+      // Start adding process
       addBtn.innerHTML = '<span class="spinner"></span>Adding...';
       addBtn.disabled = true;
-      addStatus.textContent = '';
 
       try {
         // Collect form data into payload object using SHEET_COLUMNS constants
         const payload = {
-          [SHEET_COLUMNS.STUDENT_NAME]: input.studentName.value.trim(),
-          [SHEET_COLUMNS.STUDENT_ID]: input.studentId.value.trim(),
-          [SHEET_COLUMNS.TOPIC_TITLE]: input.topicTitle.value.trim(),
+          [SHEET_COLUMNS.STUDENT_NAME]: studentName,
+          [SHEET_COLUMNS.STUDENT_ID]: studentIdValue,
+          [SHEET_COLUMNS.TOPIC_TITLE]: topicTitle,
           [SHEET_COLUMNS.DATASET_NAME]: input.dataset.value.trim(),
           [SHEET_COLUMNS.DATASET_LINK]: input.datasetLink.value.trim(),
           [SHEET_COLUMNS.GOAL]: input.goal.value.trim(),
-          [SHEET_COLUMNS.TEACHER]: input.teacher.value,
+          [SHEET_COLUMNS.TEACHER]: teacher,
           [SHEET_COLUMNS.STATUS]: 'Booked'
         };
-
-        if (!payload[SHEET_COLUMNS.STUDENT_NAME] || !payload[SHEET_COLUMNS.TOPIC_TITLE] || !payload[SHEET_COLUMNS.TEACHER]) {
-          throw new Error('Please fill in required fields: Student Name, Topic Title, and Teacher');
-        }
 
         const formData = new FormData();
         formData.append('token', API_TOKEN);
@@ -950,7 +979,7 @@
         }
         
         if (data && data.ok) {
-          addStatus.innerHTML = '<div class="status status-success">✅ Added successfully</div>';
+          addStatus.innerHTML = `<div class="status status-success">✅ Topic successfully added for student ${studentName} (ID: ${studentIdValue})</div>`;
           
           // Clear form
           Object.values(input).forEach(el => {
@@ -961,16 +990,20 @@
             }
           });
           
+          // Clear any validation errors
+          input.studentId.classList.remove('error');
+          studentIdError.classList.add('hidden');
+          
           // Refresh data
           await loadRows();
           
           // Hide check results
           checkResult.classList.add('hidden');
         } else {
-          throw new Error('Unexpected response format');
+          throw new Error('Unexpected response format from server');
         }
       } catch (err) {
-        addStatus.innerHTML = `<div class="status status-error">❌ Error: ${err.message}</div>`;
+        addStatus.innerHTML = `<div class="status status-error">❌ Error adding booking: ${err.message}</div>`;
       } finally {
         addBtn.innerHTML = 'Add to Sheet';
         addBtn.disabled = false;
