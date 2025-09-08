@@ -915,8 +915,10 @@
         return;
       }
 
-      // Check for duplicate Student ID
-      const existingStudent = allRows.find(row => row.StudentID === studentIdValue);
+      // Check for duplicate Student ID (with robust comparison)
+      const existingStudent = allRows.find(row => 
+        row.StudentID && row.StudentID.toString().trim() === studentIdValue
+      );
       if (existingStudent) {
         addStatus.innerHTML = `<div class="status status-error">❌ Student ID ${studentIdValue} is already registered for student "${existingStudent.StudentName}". Each student can only have one topic.</div>`;
         input.studentId.focus();
