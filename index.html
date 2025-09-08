@@ -391,7 +391,23 @@
       background: white; 
       z-index: 10;
     }
-  </style>
+  
+/* Scrollable conflict list inside Check Availability results */
+.conflict-list {
+  max-height: clamp(240px, 50vh, 520px);
+  overflow-y: auto;
+  padding-right: 8px;
+  margin-top: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  scrollbar-gutter: stable;
+}
+/* optional: nicer scrollbar */
+.conflict-list::-webkit-scrollbar { width: 10px; }
+.conflict-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+.conflict-list::-webkit-scrollbar-track { background: #f8fafc; }
+</style>
 </head>
 <body>
   <div class="container">
@@ -829,7 +845,7 @@
             </div>
           `;
 
-          const conflictDetails = conflicts.slice(0, 10).map(({row, analysis}) => {
+          const conflictDetails = conflicts.map(({row, analysis}) => {
             const scoreClass = analysis.overallRisk === 'high' ? 'score-high' : 
                              analysis.overallRisk === 'medium' ? 'score-medium' : 'score-low';
             
@@ -875,7 +891,7 @@
             <div class="conflicts">
               ${summary}
               <h4 style="margin-bottom: 15px;">Detailed Conflict Analysis:</h4>
-              ${conflictDetails}
+              <div class="conflict-list"><div class="conflict-list">${conflictDetails}</div></div>
               ${conflicts.length > 10 ? `<p style="text-align: center; color: #666; margin-top: 10px;">Showing top 10 of ${conflicts.length} potential conflicts</p>` : ''}
             </div>
           `;
