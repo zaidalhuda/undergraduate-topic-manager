@@ -431,8 +431,8 @@
             </div>
             <div class="form-group">
               <label>Student ID (CDU)</label>
-              <input id="studentId" placeholder="2021xxxxxxxx" maxlength="12" />
-              <div id="studentIdError" class="error-message hidden">Student ID must be 12 digits starting with 2021</div>
+              <input id="studentId" placeholder="2022xxxxxxxx" maxlength="12" />
+              <div id="studentIdError" class="error-message hidden">Student ID must be 12 digits starting with 2022</div>
             </div>
           </div>
 
@@ -645,7 +645,7 @@
 
     // Student ID validation
     function validateStudentId(value) {
-      const pattern = /^2021\d{8}$/;
+      const pattern = /^2022\d{8}$/;
       return pattern.test(value);
     }
 
@@ -919,7 +919,7 @@
       // Validate Student ID format
       const studentIdValue = input.studentId.value.trim();
       if (studentIdValue && !validateStudentId(studentIdValue)) {
-        addStatus.innerHTML = '<div class="status status-error">❌ Invalid Student ID format. Must be 12 digits starting with 2021</div>';
+        addStatus.innerHTML = '<div class="status status-error">❌ Invalid Student ID format. Must be 12 digits starting with 2022</div>';
         input.studentId.focus();
         return;
       }
